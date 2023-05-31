@@ -15,6 +15,7 @@ import SignMessageButton from '../components/SignMessageButton';
 import SignTransactionButton from '../components/SignTransactionButton';
 import { Menu } from '../components/Menu';
 import { Habit } from '../components/Habit';
+import mintNFT from '../src/mintNFT'
 
 export default function NewHabit({navigation}: any) {
   const {connection} = useConnection();
@@ -26,6 +27,17 @@ export default function NewHabit({navigation}: any) {
   const [state, setState] = useState('');
   const [frequency, setFrequency] = useState('');
   const [icon, setIcon] = useState('');
+  const [config, setConfig] = useState<any>();
+
+  useEffect(() => {
+    setConfig({
+      name: name,
+      description: description,
+      status: newOrQuit,
+      frequency: frequency,
+      icon: icon
+    })
+  }, [])
 
   const fetchAndUpdateBalance = useCallback(
     async (account: Account) => {
@@ -36,6 +48,15 @@ export default function NewHabit({navigation}: any) {
     },
     [connection],
   );
+
+  const mintHabitNFT = useCallback(
+    async () => {
+      const response = await mintNFT(config);
+      console.log(response);
+    },
+    [connection],
+  );
+
 
   useEffect(() => {
     if (!selectedAccount) {
@@ -79,11 +100,10 @@ export default function NewHabit({navigation}: any) {
           {
               icon !== '' ? (
                 <Pressable
-                onPress={() => {setState('nft')}} style={styles.nextButton}>
+                onPress={() => {setState('nft'); mintHabitNFT()}} style={styles.nextButton}>
                   <View style={frequency !== '' && name !== '' && description !=='' ? styles.glow : styles.disabled}></View>
                     <Text style={styles.text}>Create habit</Text>
                 </Pressable>
-          
               ) : (
                 <></>
               )
