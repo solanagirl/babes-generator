@@ -40,6 +40,6 @@ export default function App() {
 const styles = StyleSheet.create({
   shell: {
     height: '100%',
-    backgroundColor: '#191D32'
+    backgroundColor: '#191D32',
   },
 });
