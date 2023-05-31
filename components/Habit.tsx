@@ -9,7 +9,7 @@ import {
 import {Colors} from './Colors';
 
 export function Habit() {
-  const isDarkMode = useColorScheme() === 'dark';
+  // const isDarkMode = useColorScheme() === 'dark';
   return (
     <View style={styles.container}>
       <Text style={styles.title}>stabit</Text>
