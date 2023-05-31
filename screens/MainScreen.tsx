@@ -1,20 +1,16 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {ScrollView, StyleSheet, Text, View} from 'react-native';
 
-import {Section} from '../components/Section';
-import ConnectButton from '../components/ConnectButton';
-import AccountInfo from '../components/AccountInfo';
 import {
   useAuthorization,
   Account,
 } from '../components/providers/AuthorizationProvider';
 import {useConnection} from '../components/providers/ConnectionProvider';
-import DisconnectButton from '../components/DisconnectButton';
-import RequestAirdropButton from '../components/RequestAirdropButton';
-import SignMessageButton from '../components/SignMessageButton';
-import SignTransactionButton from '../components/SignTransactionButton';
+import ConnectButton from '../components/ConnectButton';
+import { Habit } from '../components/Habit';
+import { Menu } from '../components/Menu';
 
-export default function MainScreen() {
+export default function MainScreen({ navigation }: any) {
   const {connection} = useConnection();
   const {selectedAccount} = useAuthorization();
   const [balance, setBalance] = useState<number | null>(null);
@@ -38,55 +34,49 @@ export default function MainScreen() {
 
   return (
     <>
+    <View style={styles.container}>
       <View style={styles.mainContainer}>
-        <ScrollView contentContainerStyle={styles.scrollContainer}>
-          {selectedAccount ? (
-            <>
-              <Section title="Sign a transaction">
-                <SignTransactionButton />
-              </Section>
-
-              <Section title="Sign a message">
-                <SignMessageButton />
-              </Section>
-
-              <Section title="Account Info">
-                <AccountInfo
-                  selectedAccount={selectedAccount}
-                  balance={balance}
-                />
-                <RequestAirdropButton
-                  selectedAccount={selectedAccount}
-                  onAirdropComplete={async (account: Account) =>
-                    await fetchAndUpdateBalance(account)
-                  }
-                />
-              </Section>
-            </>
-          ) : null}
-        </ScrollView>
-        {selectedAccount ? (
-          <DisconnectButton title="Disconnect wallet" />
-        ) : (
-          <ConnectButton title="Connect wallet" />
-        )}
-        <Text>Selected cluster: {connection.rpcEndpoint}</Text>
+        <Text style={styles.title}>Your habits and the stakes, all in one place</Text>
+        <ConnectButton title='Connect to view data' />
       </View>
+      <Text style={styles.habitTitle}>Your Habits</Text>
+      <ScrollView contentContainerStyle={styles.contentContainer} horizontal={true} showsHorizontalScrollIndicator={true} fadingEdgeLength={100} persistentScrollbar={true}>
+        <Habit />
+        <Habit />
+        <Habit />
+      </ScrollView>
+      <Menu navigation={navigation}/>
+    </View>
     </>
   );
 }
 
 const styles = StyleSheet.create({
-  mainContainer: {
-    height: '100%',
-    padding: 16,
+  container: {
+    paddingHorizontal: 48,
+    paddingVertical: 12,
+    backgroundColor: '#191D32',
     flex: 1,
+    rowGap: 24
   },
-  scrollContainer: {
-    height: '100%',
+  mainContainer: {
+    backgroundColor: '#282F44',
+    paddingVertical: 24,
+    paddingHorizontal: 32,
+    borderRadius: 24,
+    height: 222
   },
-  buttonGroup: {
-    flexDirection: 'column',
-    paddingVertical: 4,
+  title: {
+    fontSize: 24,
+    color: '#C1B2C7',
+    marginBottom: 12
   },
+  contentContainer: {
+    gap: 8,
+    paddingHorizontal: 8
+  },
+  habitTitle: {
+    fontSize: 24,
+    color: '#C1B2C7',
+  }
 });

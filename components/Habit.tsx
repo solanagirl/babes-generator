@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import {Colors} from './Colors';
 
-export function Header() {
+export function Habit() {
   const isDarkMode = useColorScheme() === 'dark';
   return (
     <View style={styles.container}>
@@ -19,11 +19,15 @@ export function Header() {
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: 48,
-    paddingHorizontal: 40
+    paddingTop: 24,
+    paddingHorizontal: 24,
+    height: 150,
+    width: '50%',
+    backgroundColor: '#282F44',
+    borderRadius: 12
   },
   title: {
-    fontSize: 64,
+    fontSize: 24,
     color: '#C1B2C7',
   }
 });
