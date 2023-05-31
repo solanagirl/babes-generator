@@ -28,6 +28,9 @@ export const Menu = ({navigation}: Props) => {
                     <Pressable style={styles.smallButton} onPress={() => {setExpanded(!expanded)}}>
                         <Image source={require('../img/analytics.png')} style={styles.icon}/>
                     </Pressable>
+                    <Pressable style={styles.smallButton} onPress={() => {setExpanded(!expanded)}}>
+                        <Image source={require('../img/home.png')} style={styles.icon}/>
+                    </Pressable>
                 </View>
             </View>
     

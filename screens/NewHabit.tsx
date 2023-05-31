@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {ScrollView, StyleSheet, Text, View, Pressable, TextInput} from 'react-native';
+import {ScrollView, StyleSheet, Text, View, Pressable, TextInput, Image} from 'react-native';
 
 import {Section} from '../components/Section';
 import ConnectButton from '../components/ConnectButton';
@@ -14,6 +14,7 @@ import RequestAirdropButton from '../components/RequestAirdropButton';
 import SignMessageButton from '../components/SignMessageButton';
 import SignTransactionButton from '../components/SignTransactionButton';
 import { Menu } from '../components/Menu';
+import { Habit } from '../components/Habit';
 
 export default function NewHabit({navigation}: any) {
   const {connection} = useConnection();
@@ -24,6 +25,7 @@ export default function NewHabit({navigation}: any) {
   const [description, setDescription] = useState('');
   const [state, setState] = useState('');
   const [frequency, setFrequency] = useState('');
+  const [icon, setIcon] = useState('');
 
   const fetchAndUpdateBalance = useCallback(
     async (account: Account) => {
@@ -43,6 +45,51 @@ export default function NewHabit({navigation}: any) {
   }, [fetchAndUpdateBalance, selectedAccount]);
 
   switch (state) {
+    case 'nft': 
+      return (
+        <View style={styles.mainContainer}>
+          <Menu navigation={navigation}/>
+          <View>
+            <Text style={styles.subtitle}>Choose an Icon!</Text>
+            <ScrollView contentContainerStyle={styles.contentContainer} horizontal={true} showsHorizontalScrollIndicator={true} fadingEdgeLength={100} persistentScrollbar={true}>
+              <Pressable style={icon == 'checklist' ? styles.iconBackgroundPressed : styles.iconBackground} onPress={() => {setIcon('checklist')}} >
+                <Image source={require('../img/checklist.png')} alt='checklist' style={styles.icon}/>
+              </Pressable>
+              <Pressable style={icon == 'medicine' ? styles.iconBackgroundPressed : styles.iconBackground} onPress={() => {setIcon('medicine')}}>
+                <Image source={require('../img/medicine.png')} alt='medicine' style={styles.icon}/>
+              </Pressable>
+              <Pressable style={icon == 'person' ? styles.iconBackgroundPressed : styles.iconBackground} onPress={() => {setIcon('person')}}>
+                <Image source={require('../img/person.png')} alt='person' style={styles.icon}/>
+              </Pressable>
+              <Pressable style={icon == 'self-love' ? styles.iconBackgroundPressed : styles.iconBackground} onPress={() => {setIcon('self-love')}}>
+                <Image source={require('../img/self-love.png')} alt='self-love' style={styles.icon}/>
+              </Pressable>
+              <Pressable style={icon == 'sleeping' ? styles.iconBackgroundPressed : styles.iconBackground} onPress={() => {setIcon('sleeping')}}>
+                <Image source={require('../img/sleeping.png')} alt='sleeping' style={styles.icon}/>
+              </Pressable>
+              <Pressable style={icon == 'water' ? styles.iconBackgroundPressed : styles.iconBackground} onPress={() => {setIcon('water')}}>
+                <Image source={require('../img/water-bottle.png')} alt='water' style={styles.icon}/>
+              </Pressable>
+              <Pressable style={icon == 'yoga' ? styles.iconBackgroundPressed : styles.iconBackground} onPress={() => {setIcon('yoga')}}>
+                <Image source={require('../img/yoga.png')} alt='yoga' style={styles.icon}/>
+              </Pressable>
+            </ScrollView>
+          </View>
+          <Text style={styles.subtitle}>Keep yourself accountable, track your progress with a token.</Text>
+          {
+              icon !== '' ? (
+                <Pressable
+                onPress={() => {setState('nft')}} style={styles.nextButton}>
+                  <View style={frequency !== '' && name !== '' && description !=='' ? styles.glow : styles.disabled}></View>
+                    <Text style={styles.text}>Create habit</Text>
+                </Pressable>
+          
+              ) : (
+                <></>
+              )
+            }
+        </View>
+      )
     case 'info':
       return (
         <View style={styles.mainContainer}>
@@ -67,7 +114,7 @@ export default function NewHabit({navigation}: any) {
           {
               frequency !== '' ? (
                 <Pressable
-                onPress={() => {setState('info')}} style={styles.nextButton}>
+                onPress={() => {setState('nft')}} style={styles.nextButton}>
                   <View style={frequency !== '' && name !== '' && description !=='' ? styles.glow : styles.disabled}></View>
                     <Text style={styles.text}>Next</Text>
                 </Pressable>
@@ -117,6 +164,32 @@ const styles = StyleSheet.create({
     paddingVertical: 24,
     paddingBottom: 169,
     rowGap: 16,
+  },
+  contentContainer: {
+    gap: 8,
+    paddingHorizontal: 8,
+    marginTop: 12,
+    paddingVertical: 24
+  },
+  icon: {
+    width: 64,
+    height: 64,
+  },
+  iconBackground: {
+    padding: 12,
+    backgroundColor: '#C1B2C7',
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 48
+  },
+  iconBackgroundPressed: {
+    padding: 12,
+    backgroundColor: '#BA2C73',
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 48
   },
   subtitle: {
     fontSize: 24,
@@ -192,7 +265,7 @@ const styles = StyleSheet.create({
     borderColor: '#BA2C73',
     borderWidth: 4,
     width: '80%',
-    height: '80%',
+    height: '50%',
     position: 'absolute',
     shadowOffset: {width: -1, height: 1},
     flexGrow: 1,
