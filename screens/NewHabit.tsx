@@ -1,3 +1,5 @@
+
+
 import React, {useCallback, useEffect, useState} from 'react';
 import {ScrollView, StyleSheet, Text, View, Pressable, TextInput, Image} from 'react-native';
 
@@ -169,7 +171,7 @@ const styles = StyleSheet.create({
     gap: 8,
     paddingHorizontal: 8,
     marginTop: 12,
-    paddingVertical: 24,
+    paddingVertical: 24
   },
   icon: {
     width: 64,
@@ -198,17 +200,16 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: '#282F44',
     paddingVertical: 12,
-    // height: 12,
     borderRadius: 12,
     flex: 1,
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center'
+
   },
   buttonPressed: {
     backgroundColor: '#BA2C73',
     paddingVertical: 12,
-    // height: 16,
     borderRadius: 12,
     flex: 1,
     flexDirection: 'column',

@@ -24,7 +24,7 @@ export default function App() {
         <SafeAreaView style={styles.shell}>
           <Stack.Navigator>
             <Stack.Screen
-              name="stabit"
+              name="Home"
               component={MainScreen}
               options={{ header: (props) => <Header></Header> }}
             />
