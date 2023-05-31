@@ -37,14 +37,31 @@ export default function MainScreen({ navigation }: any) {
     <View style={styles.container}>
       <View style={styles.mainContainer}>
         <Text style={styles.title}>Your habits and the stakes, all in one place</Text>
-        <ConnectButton title='Connect to view data' />
+        {
+          selectedAccount ? (
+            <View>
+              <Text>Your Balance: {balance} SOL</Text>
+              <Text>Connected to: {selectedAccount.publicKey.toBase58()}</Text>
+            </View>
+          ) : (
+            <ConnectButton title='Connect to view data' />
+          )
+        }
       </View>
-      <Text style={styles.habitTitle}>Your Habits</Text>
-      <ScrollView contentContainerStyle={styles.contentContainer} horizontal={true} showsHorizontalScrollIndicator={true} fadingEdgeLength={100} persistentScrollbar={true}>
-        <Habit />
-        <Habit />
-        <Habit />
-      </ScrollView>
+      {
+          selectedAccount ? (
+            <View>
+              <Text style={styles.habitTitle}>Your Habits</Text>
+              <ScrollView contentContainerStyle={styles.contentContainer} horizontal={true} showsHorizontalScrollIndicator={true} fadingEdgeLength={100} persistentScrollbar={true}>
+                <Habit />
+                <Habit />
+                <Habit />
+              </ScrollView>
+              </View>
+          ) : (
+            <></>
+          )
+        }
       <Menu navigation={navigation}/>
     </View>
     </>

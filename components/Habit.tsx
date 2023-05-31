@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   ImageBackground,
   StyleSheet,
@@ -6,10 +6,16 @@ import {
   useColorScheme,
   View,
 } from 'react-native';
-import {Colors} from './Colors';
+import getMetadata from '../src/ownedNFT';
 
 export function Habit() {
-  const isDarkMode = useColorScheme() === 'dark';
+  useEffect(() => {
+    async function getHabits() {
+      const tokens = await getMetadata('');
+    };
+    getHabits();
+  })
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>stabit</Text>

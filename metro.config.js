@@ -13,5 +13,9 @@ module.exports = {
         inlineRequires: true,
       },
     }),
+    resolver: {
+      nodeModulesPaths: ['./node_modules'], // update to resolver
+    },
+    watchFolders: ['./node_modules'], // update to resolver
   },
 };
