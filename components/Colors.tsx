@@ -1,9 +1,9 @@
 export const Colors = {
-  primary: '#1292B4',
-  white: '#FFF',
-  lighter: '#F3F3F3',
-  light: '#DAE1E7',
-  dark: '#444',
-  darker: '#222',
-  black: '#000',
+  background: '#0F0F0F',
+  component: '#202020',
+  font: '#FAFAFA',
+  pink: '#FF009D',
+  purple: '#5D4099',
+  blue: '#4dd9ff',
+  mint: '#44c98d',
 };

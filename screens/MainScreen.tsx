@@ -8,7 +8,8 @@ import {
 import {useConnection} from '../components/providers/ConnectionProvider';
 import ConnectButton from '../components/ConnectButton';
 import { Habit } from '../components/Habit';
-import { Menu } from '../components/Menu';
+import { Menu } from '../components/Menu'
+import { Colors } from '../components/Colors'
 
 export default function MainScreen({ navigation }: any) {
   const {connection} = useConnection();
@@ -33,10 +34,9 @@ export default function MainScreen({ navigation }: any) {
   }, [fetchAndUpdateBalance, selectedAccount]);
 
   return (
-    <>
     <View style={styles.container}>
       <View style={styles.mainContainer}>
-        <Text style={styles.title}>Your habits and the stakes, all in one place</Text>
+        <Text style={styles.title}>Your habits and stakes, all in one place</Text>
         {
           selectedAccount ? (
             <View>
@@ -50,21 +50,28 @@ export default function MainScreen({ navigation }: any) {
       </View>
       {
           selectedAccount ? (
+            <Text style={styles.title}>Connect your Solana wallet to view your habits</Text>
+            // <View>
+            //   <Text style={styles.title}>Your Habits</Text>
+            //   <ScrollView contentContainerStyle={styles.contentContainer} horizontal={true} showsHorizontalScrollIndicator={true} fadingEdgeLength={100} persistentScrollbar={true}>
+            //     <Habit />
+            //     <Habit />
+            //     <Habit />
+            //   </ScrollView>
+            //   </View>
+          ) : (
+            // <Text style={styles.title}>Connect your Solana wallet to view your habits</Text>
             <View>
-              <Text style={styles.habitTitle}>Your Habits</Text>
-              <ScrollView contentContainerStyle={styles.contentContainer} horizontal={true} showsHorizontalScrollIndicator={true} fadingEdgeLength={100} persistentScrollbar={true}>
+              <Text style={styles.title}>Your Habits</Text>
+              <ScrollView contentContainerStyle={styles.contentContainer} horizontal={true} showsHorizontalScrollIndicator={false} fadingEdgeLength={50} persistentScrollbar={true}>
                 <Habit />
                 <Habit />
                 <Habit />
               </ScrollView>
-              <Menu navigation={navigation}/>
-              </View>
-          ) : (
-            <Text>Sign in to view your habits: </Text>
+            </View>
           )
         }
     </View>
-    </>
   );
 }
 
@@ -72,29 +79,28 @@ const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 48,
     paddingVertical: 12,
-    backgroundColor: '#191D32',
+    backgroundColor: Colors.background,
     flex: 1,
     rowGap: 24
   },
   mainContainer: {
-    backgroundColor: '#282F44',
+    backgroundColor: Colors.component,
     paddingVertical: 24,
     paddingHorizontal: 32,
     borderRadius: 24,
-    height: 222
+    height: 222,
+    alignItems: "center",
   },
   title: {
     fontSize: 24,
-    color: '#C1B2C7',
+    color: Colors.font,
     marginBottom: 12,
     fontFamily: 'Nunito',
+    textAlign: 'center',
   },
   contentContainer: {
     gap: 8,
-    paddingHorizontal: 8
-  },
-  habitTitle: {
-    fontSize: 24,
-    color: '#C1B2C7',
-  },
+    paddingHorizontal: 8,
+    marginVertical: 8,
+  }
 });

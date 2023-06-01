@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import getMetadata from '../src/ownedNFT';
 import { useAuthorization } from './providers/AuthorizationProvider';
+import { Colors } from './Colors';
 
 export function Habit() {
   const { selectedAccount } = useAuthorization();
@@ -23,21 +24,25 @@ export function Habit() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>stabit</Text>
+      <Text style={styles.text}>asdasda</Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: 24,
-    paddingHorizontal: 24,
+    padding: 24,
     height: 150,
-    width: '50%',
-    backgroundColor: '#282F44',
-    borderRadius: 12
+    width: '30%',
+    backgroundColor: Colors.component,
+    borderRadius: 12,
+  },
+  text: {
+    color: Colors.font,
   },
   title: {
     fontSize: 24,
-    color: '#C1B2C7',
+    fontFamily: "Nunito",
+    color: Colors.font,
   }
 });

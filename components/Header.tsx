@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  Button,
   ImageBackground,
   StyleSheet,
   Text,
@@ -8,23 +9,33 @@ import {
 } from 'react-native';
 import {Colors} from './Colors';
 
+
 export function Header() {
   const isDarkMode = useColorScheme() === 'dark';
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>stabit</Text>
+      <Text style={styles.baseText}>
+        <Text style={styles.title}>
+          Hello Amy!
+        </Text>
+      </Text>
+      <Button color={Colors.component} title="ajwdoa"/>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: 48,
-    paddingHorizontal: 40
+    paddingTop: 25,
+    paddingHorizontal: 40,
+    backgroundColor: Colors.background,
+  },
+  baseText: {
+    fontFamily: 'Nunito',
   },
   title: {
-    fontSize: 64,
-    color: '#C1B2C7',
-    fontFamily: 'Nunito',
-  }
+    color: Colors.font,
+    fontSize: 32,
+    fontWeight: 'bold',
+  },
 });
