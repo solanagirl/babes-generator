@@ -57,12 +57,12 @@ export default function MainScreen({ navigation }: any) {
                 <Habit />
                 <Habit />
               </ScrollView>
+              <Menu navigation={navigation}/>
               </View>
           ) : (
             <></>
           )
         }
-      <Menu navigation={navigation}/>
     </View>
     </>
   );
