@@ -60,7 +60,7 @@ export default function MainScreen({ navigation }: any) {
               <Menu navigation={navigation}/>
               </View>
           ) : (
-            <></>
+            <Text>Sign in to view your habits: </Text>
           )
         }
     </View>
@@ -86,7 +86,8 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     color: '#C1B2C7',
-    marginBottom: 12
+    marginBottom: 12,
+    fontFamily: 'Nunito',
   },
   contentContainer: {
     gap: 8,
@@ -95,5 +96,5 @@ const styles = StyleSheet.create({
   habitTitle: {
     fontSize: 24,
     color: '#C1B2C7',
-  }
+  },
 });
