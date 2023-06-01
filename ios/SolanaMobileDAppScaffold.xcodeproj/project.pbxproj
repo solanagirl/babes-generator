@@ -14,6 +14,8 @@
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		7699B88040F8A987B510C191 /* libPods-SolanaMobileDAppScaffold-SolanaMobileDAppScaffoldTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19F6CBCC0A4E27FBF8BF4A61 /* libPods-SolanaMobileDAppScaffold-SolanaMobileDAppScaffoldTests.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		40C9AE9D957645CF84E30373 /* Nunito.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5F8E9799DBFD4848A8CBB909 /* Nunito.ttf */; };
+		0B9791D246E74340B8ECDEA6 /* YatraOne-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5ACB9FBE468B4D7F9C025396 /* YatraOne-Regular.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -44,6 +46,8 @@
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = SolanaMobileDAppScaffold/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		89C6BE57DB24E9ADA2F236DE /* Pods-SolanaMobileDAppScaffold-SolanaMobileDAppScaffoldTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SolanaMobileDAppScaffold-SolanaMobileDAppScaffoldTests.release.xcconfig"; path = "Target Support Files/Pods-SolanaMobileDAppScaffold-SolanaMobileDAppScaffoldTests/Pods-SolanaMobileDAppScaffold-SolanaMobileDAppScaffoldTests.release.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
+		5F8E9799DBFD4848A8CBB909 /* Nunito.ttf */ = {isa = PBXFileReference; name = "Nunito.ttf"; path = "../fonts/Nunito.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		5ACB9FBE468B4D7F9C025396 /* YatraOne-Regular.ttf */ = {isa = PBXFileReference; name = "YatraOne-Regular.ttf"; path = "../fonts/YatraOne-Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -122,6 +126,7 @@
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				BBD78D7AC51CEA395F1C20DB /* Pods */,
+				B34FF22AEAAA4AA0A8FEBECD /* Resources */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -147,6 +152,16 @@
 			);
 			path = Pods;
 			sourceTree = "<group>";
+		};
+		B34FF22AEAAA4AA0A8FEBECD /* Resources */ = {
+			isa = "PBXGroup";
+			children = (
+				5F8E9799DBFD4848A8CBB909 /* Nunito.ttf */,
+				5ACB9FBE468B4D7F9C025396 /* YatraOne-Regular.ttf */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+			path = "";
 		};
 /* End PBXGroup section */
 
@@ -244,6 +259,8 @@
 			files = (
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
+				40C9AE9D957645CF84E30373 /* Nunito.ttf in Resources */,
+				0B9791D246E74340B8ECDEA6 /* YatraOne-Regular.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

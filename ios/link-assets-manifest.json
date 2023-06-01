@@ -1,0 +1,13 @@
+{
+  "migIndex": 1,
+  "data": [
+    {
+      "path": "fonts/Nunito.ttf",
+      "sha1": "9d2fcc11a026eec60c1803548263bab207873371"
+    },
+    {
+      "path": "fonts/YatraOne-Regular.ttf",
+      "sha1": "ee58a6e549393384ec5e97d7f6f126b52dcc4403"
+    }
+  ]
+}
