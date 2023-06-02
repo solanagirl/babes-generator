@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
     height: 150,
     width: '30%',
     backgroundColor: Colors.component,
-    borderRadius: 12,
+    borderRadius: 30,
   },
   text: {
     color: Colors.font,

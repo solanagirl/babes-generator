@@ -78,7 +78,7 @@ export default function MainScreen({ navigation }: any) {
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 48,
+    paddingHorizontal: 30,
     paddingVertical: 12,
     backgroundColor: Colors.background,
     flex: 1,
@@ -86,22 +86,21 @@ const styles = StyleSheet.create({
   },
   mainContainer: {
     backgroundColor: Colors.component,
-    paddingVertical: 24,
-    paddingHorizontal: 32,
-    borderRadius: 24,
-    height: 222,
+    paddingVertical: 20,
+    paddingHorizontal: 20,
+    borderRadius: 30,
+    height: 200,
     alignItems: "center",
   },
   title: {
-    fontSize: 24,
+    fontSize: 20,
     color: Colors.font,
     marginBottom: 12,
     fontFamily: 'Nunito',
     textAlign: 'center',
   },
   contentContainer: {
-    gap: 8,
-    paddingHorizontal: 8,
-    marginVertical: 8,
+    gap: 10,
+    marginVertical: 10,
   }
 });

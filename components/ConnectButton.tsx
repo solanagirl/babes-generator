@@ -29,11 +29,11 @@ export default function ConnectButton(props: Props) {
       {...props}
       disabled={authorizationInProgress}
       onPress={handleConnectPress} style={styles.button}>
-        {/* <View style={styles.glow}></View> */}
-        <View style={styles.container}>
-          <Text style={styles.text}>Connect Wallet</Text>
-        </View>
-      </Pressable>
+      {/* <View style={styles.glow}></View> */}
+      <View style={styles.container}>
+        <Text style={styles.text}>Connect Wallet</Text>
+      </View>
+    </Pressable>
   );
 }
 
@@ -47,8 +47,8 @@ export const styles = StyleSheet.create(({
   },
   container: {
     backgroundColor: Colors.pink,
-    borderRadius: 24,
-    padding: 18,
+    borderRadius: 30,
+    padding: 20,
     width: '100%',
     height: '100%'
   },
@@ -59,6 +59,7 @@ export const styles = StyleSheet.create(({
     height: '100%',
     textAlignVertical: 'center',
     fontSize: 20,
+    fontFamily: 'Nunito',
   },
   // glow: {
   //   borderColor: '#BA2C73',
