@@ -4,8 +4,7 @@ import {Button, Pressable, StyleSheet, View, Image} from 'react-native';
 
 import {useAuthorization} from './providers/AuthorizationProvider';
 import {Colors} from './Colors';
-import { createBurnCheckedInstruction } from '@solana/spl-token'
-import { getAssociatedTokenAddressSync } from '@solana/spl-token'
+import { getAssociatedTokenAddressSync, createBurnInstruction} from '@solana/spl-token'
 import { Connection, PublicKey, Transaction, clusterApiUrl } from '@solana/web3.js';
 
 type Props = {
@@ -19,47 +18,46 @@ export const APP_IDENTITY = {
 export default function Burn({nft}: Props) {
   const {authorizeSession, selectedAccount} = useAuthorization();
   const [burnInProgress, setBurnInProgress] = useState(false);
-  const messageBuffer = new Buffer(`Burning ${nft.name} Habit`);
   
   const handleBurnPress = useCallback(async () => {
     const token = getAssociatedTokenAddressSync(new PublicKey(nft.mintAddress), new PublicKey(nft.ownerAddress));
-    const connection = new Connection(clusterApiUrl('devnet'), 'confirmed');
 
     setBurnInProgress(true);
-    await transact(async (wallet) => {  
-        if (wallet) {
-            const [authorizationResult, latestBlockhash] = await Promise.all([
-                authorizeSession(wallet),
-                connection.getLatestBlockhash(),
-                ]);
-            let tx = new Transaction({...latestBlockhash, feePayer: authorizationResult.publicKey}).add(createBurnCheckedInstruction(
-                token,
-                nft.mintAddress,
-                selectedAccount!.publicKey,
-                1,
-                0
-            ));
     
-            const signedMessages = await wallet.signAndSendTransactions({
+    const signature = await transact(async (wallet) => {  
+        const connection = new Connection(clusterApiUrl('devnet'), 'confirmed');
+        if (wallet) {
+            const latestBlockhash = connection.getLatestBlockhash();
+
+            const authorizationResult = await authorizeSession(wallet);
+
+            let tx = new Transaction()
+
+            const payer = new PublicKey(authorizationResult.publicKey)
+            const mint = new PublicKey(nft.mintAddress);
+            
+            const instruction = createBurnInstruction(
+                token,
+                mint,
+                payer,
+                1
+            )
+
+            tx.instructions.push(instruction);
+            tx.feePayer = payer;
+            tx.recentBlockhash = (await latestBlockhash).blockhash;
+
+    
+            return await wallet.signAndSendTransactions({
                 transactions: [tx],
             });
-    
-            if (signedMessages) {
-                setBurnInProgress(false);
-            } else {
-                setTimeout(() => {
-                    return(
-                        <View>
-                            Timout
-                        </View>
-                    )
-                }, 1000)
-            }
         } else {
             setBurnInProgress(false);
         }
-        console.log(burnInProgress)
     });
+    if (signature) {
+        setBurnInProgress(false);
+    }
   }, [authorizeSession]);
   return (
     <Pressable

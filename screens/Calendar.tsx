@@ -25,7 +25,7 @@ export default function Calendar({ navigation }: any) {
       console.log('Balance fetched: ' + fetchedBalance);
       setBalance(fetchedBalance);
     },
-    [connection],
+    [connection, balance],
   );
 
   useEffect(() => {
@@ -41,7 +41,6 @@ export default function Calendar({ navigation }: any) {
     }
     async function findOwnedNFT() {
       const data = await findNFT(selectedAccount?.publicKey);
-      console.log('nft', data)
       setNFTs(await data.results);
     }
     findOwnedNFT();

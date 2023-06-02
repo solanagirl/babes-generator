@@ -26,7 +26,7 @@ export default function MainScreen({ navigation }: any) {
       console.log('Balance fetched: ' + fetchedBalance);
       setBalance(fetchedBalance);
     },
-    [connection],
+    [connection, balance],
   );
 
   useEffect(() => {
@@ -44,10 +44,11 @@ export default function MainScreen({ navigation }: any) {
       setLoading(true)
       const data = await findNFT(selectedAccount?.publicKey);
       setNFTs(await data.results);
+      console.log(nfts)
       setLoading(false)
     }
     findOwnedNFT();
-  }, [selectedAccount]);
+  }, [balance]);
 
   if (loading) {
     return (
