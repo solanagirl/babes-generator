@@ -17,7 +17,7 @@ import SignMessageButton from '../components/SignMessageButton';
 import SignTransactionButton from '../components/SignTransactionButton';
 import { Menu } from '../components/Menu';
 import { Habit } from '../components/Habit';
-import mintNFT from '../src/mintNFT'
+import mintNFT, { makeMetadataURI } from '../src/mintNFT'
 
 export default function NewHabit({navigation}: any) {
   const {connection} = useConnection();
@@ -29,17 +29,6 @@ export default function NewHabit({navigation}: any) {
   const [state, setState] = useState('');
   const [frequency, setFrequency] = useState('');
   const [icon, setIcon] = useState('');
-  const [config, setConfig] = useState<any>();
-
-  useEffect(() => {
-    setConfig({
-      name: name,
-      description: description,
-      status: newOrQuit,
-      frequency: frequency,
-      icon: icon
-    })
-  }, [])
 
   const fetchAndUpdateBalance = useCallback(
     async (account: Account) => {
@@ -50,15 +39,32 @@ export default function NewHabit({navigation}: any) {
     },
     [connection],
   );
+  const uri = '';
 
-  const mintHabitNFT = useCallback(
-    async () => {
-      const response = await mintNFT(config);
-      console.log(response);
-    },
-    [connection],
-  );
+  async function mintHabitNFT() {
+    const config = {
+      name: name,
+      description: description,
+      status: newOrQuit,
+      frequency: frequency,
+      icon: icon  
+    }
 
+    console.log(selectedAccount)
+    
+    const response = await mintNFT({selectedAccount, connection, config, uri});
+    console.log(response);
+  }
+
+  async function makeMetadataAccount(name: string, description: string, link: string) {
+    const config = {
+      name: name,
+      description: description,
+      imageURI: link
+    }
+    const uri = await makeMetadataURI({connection, config});
+    console.log(uri)
+  }
 
   useEffect(() => {
     if (!selectedAccount) {
@@ -75,7 +81,7 @@ export default function NewHabit({navigation}: any) {
           <View>
             <Text style={styles.subtitle}>Choose an Icon!</Text>
             <ScrollView contentContainerStyle={styles.contentContainer} horizontal={true} showsHorizontalScrollIndicator={true} fadingEdgeLength={100} persistentScrollbar={true}>
-              <Pressable style={icon == 'checklist' ? styles.iconBackgroundPressed : styles.iconBackground} onPress={() => {setIcon('checklist')}} >
+              <Pressable style={icon == 'checklist' ? styles.iconBackgroundPressed : styles.iconBackground} onPress={() => {setIcon('checklist'); makeMetadataAccount('tasks', 'Have you done your tasks yet? Check in', '../img/checklist.png')}} >
                 <Image source={require('../img/checklist.png')} alt='checklist' style={styles.icon}/>
               </Pressable>
               <Pressable style={icon == 'medicine' ? styles.iconBackgroundPressed : styles.iconBackground} onPress={() => {setIcon('medicine')}}>

@@ -71,7 +71,6 @@ export default function MainScreen({ navigation }: any) {
             </View>
           )
         }
-      <Menu navigation={navigation}/>
     </View>
   );
 }

@@ -2,33 +2,34 @@ import { Connection, PublicKey, TransactionMessage, VersionedTransaction, System
 import { createInitializeMintInstruction, getAssociatedTokenAddress, createAssociatedTokenAccountInstruction, createMintToCheckedInstruction, TOKEN_PROGRAM_ID, MINT_SIZE } from '@solana/spl-token';
 import { createCreateMetadataAccountV3Instruction, PROGRAM_ID} from '@metaplex-foundation/mpl-token-metadata';
 import { Buffer } from 'buffer';
-import { useConnection } from '../components/providers/ConnectionProvider';
-import { useAuthorization } from '../components/providers/AuthorizationProvider';
 import {
     transact,
     Web3MobileWallet,
   } from '@solana-mobile/mobile-wallet-adapter-protocol-web3js';
   
 type Props = {
-    config: any
+    config: any,
+    selectedAccount: any,
+    connection: any,
+    uri: string
 }
-export default async function mintNFT({config}: Props) {
-    const {connection} = useConnection();
-    const {selectedAccount} = useAuthorization();
 
+export default async function mintNFT({selectedAccount, connection, config, uri}: Props) {
     const mint = Keypair.generate();
     const mint_signer:Signer = mint;
-    const creatorPubKey = selectedAccount!.publicKey;
+    const creatorPubKey = selectedAccount.publicKey;
 
+    
     const associatedTokenPubkey = await getAssociatedTokenAddress(mint.publicKey, creatorPubKey);
 
     const tokenPubkey = PublicKey.findProgramAddressSync(
         [ Buffer.from('metadata'), PROGRAM_ID.toBuffer(), mint.publicKey.toBuffer()],
         PROGRAM_ID,
     )[0];
-    
     const token_transaction : TransactionInstruction[] = [];
 
+
+    await transact(async (wallet: any) => {
         console.log('Create Mint Account Instructions')
         const createMintAccountInstruction = SystemProgram.createAccount({
             fromPubkey: creatorPubKey,
@@ -80,7 +81,7 @@ export default async function mintNFT({config}: Props) {
                     data: {
                         name: config.name.slice(0,9),
                         symbol: 'STABIT',
-                        uri: config.uri,
+                        uri: uri,
                         sellerFeeBasisPoints: 500,
                         creators: [
                             {
@@ -115,11 +116,43 @@ export default async function mintNFT({config}: Props) {
         const mintSign = transaction.sign([mint_signer]);
     
         console.log('Mint Account Signed');
-        
-        const signature = await transact(async (wallet: Web3MobileWallet) => {
-            const signedTransaction = await wallet.signTransactions({transactions: [transaction]});
-            console.log('User Signed', signedTransaction)
-        })
 
-        console.log(`Transaction signature: ${signature}`)
+        const signedTransaction = await wallet.signTransactions({transactions: [transaction]});
+        console.log('User Signed', signedTransaction)
+
+    });
 }
+
+// export async function makeMetadataURI({connection, config}: MetadataProps) {
+//     const uri = await transact(async (wallet: any) => {
+//         const metaplex = new Metaplex(connection).use(walletAdapterIdentity(wallet)).use(bundlrStorage({
+//             address: 'https://node1.bundlr.network/',
+//             providerUrl: process.env.QN_MAINNET,
+//             timeout: 60000,
+//         }));;
+//         const bundlr = metaplex.storage().driver() as BundlrStorageDriver;
+
+//         console.log('Create metadata account')
+//         const metaplexImage = await toMetaplexFile(config.imageURI, config.name);
+//         const price = await bundlr.getUploadPriceForFiles([metaplexImage])
+//         await bundlr.fund(price);
+//         const imageURI = await bundlr.upload(metaplexImage);  
+//         console.log(imageURI)
+
+//         const { uri } = await metaplex.nfts().uploadMetadata({
+//             name: config.name,
+//             description: config.description,
+//             image: imageURI,
+//             attributes: [
+//                 {
+//                     trait_type: "frequency",
+//                 },
+//                 {
+//                     trait_type: "status",
+//                 },
+//             ]
+//         });
+//         return uri
+//     });
+//     return uri
+// }

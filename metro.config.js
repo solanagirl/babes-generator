@@ -15,6 +15,7 @@ module.exports = {
     }),
     resolver: {
       nodeModulesPaths: ['./node_modules'], // update to resolver
+      sourceExts: ['jsx', 'js', 'ts', 'tsx', 'cjs', 'json'],
     },
     watchFolders: ['./node_modules'], // update to resolver
   },

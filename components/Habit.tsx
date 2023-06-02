@@ -7,12 +7,16 @@ import {
   View,
 } from 'react-native';
 import getMetadata from '../src/ownedNFT';
+import { useAuthorization } from './providers/AuthorizationProvider';
 import { Colors } from './Colors';
 
 export function Habit() {
+  const { selectedAccount } = useAuthorization();
+
   useEffect(() => {
     async function getHabits() {
-      const tokens = await getMetadata('');
+      const tokens = await getMetadata(selectedAccount, '');
+      console.log(tokens)
     };
     getHabits();
   })
