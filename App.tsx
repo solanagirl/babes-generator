@@ -8,8 +8,9 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
 import MainScreen from './screens/MainScreen';
-import {Menu} from './components/Menu';
 import NewHabit from './screens/NewHabit';
+import Calendar from './screens/Calendar';
+import Analytics from './screens/Analytics';
 
 const DEVNET_ENDPOINT = clusterApiUrl('devnet');
 const Stack = createNativeStackNavigator();
@@ -26,9 +27,11 @@ export default function App() {
             <Stack.Screen
               name="Home"
               component={MainScreen}
-              options={{ header: (props) => <Header></Header> }}
+              options={{ header: (props) => <Header date={true}></Header> }}
             />
-            <Stack.Screen name="NewHabit" component={NewHabit} options={{ header: (props) => <Header></Header> }} />
+            <Stack.Screen name="NewHabit" component={NewHabit} options={{ header: (props) => <Header date={false}></Header> }} />
+            <Stack.Screen name="Analytics" component={Analytics} options={{ header: (props) => <Header date={true}></Header> }} />
+            <Stack.Screen name="Calendar" component={Calendar} options={{ header: (props) => <Header date={true}></Header> }} />
           </Stack.Navigator>
           </SafeAreaView>
         </NavigationContainer>

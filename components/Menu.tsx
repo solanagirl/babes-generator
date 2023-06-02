@@ -22,10 +22,10 @@ export const Menu = ({navigation}: Props) => {
                     <Pressable style={styles.smallButton} onPress={() => {setExpanded(!expanded); navigation.navigate('NewHabit')}}>
                         <Image source={require('../img/add.png')} style={styles.icon}/>
                     </Pressable>
-                    <Pressable style={styles.smallButton} onPress={() => {setExpanded(!expanded)}}>
+                    <Pressable style={styles.smallButton} onPress={() => {setExpanded(!expanded); navigation.navigate('Calendar')}}>
                         <Image source={require('../img/calendar.png')} style={styles.icon}/>
                     </Pressable>
-                    <Pressable style={styles.smallButton} onPress={() => {setExpanded(!expanded)}}>
+                    <Pressable style={styles.smallButton} onPress={() => {setExpanded(!expanded); navigation.navigate('Analytics')}}>
                         <Image source={require('../img/analytics.png')} style={styles.icon}/>
                     </Pressable>
                     <Pressable style={styles.smallButton} onPress={() => {setExpanded(!expanded); navigation.navigate('Home')}}>

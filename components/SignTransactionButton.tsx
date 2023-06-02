@@ -16,7 +16,7 @@ import {
 import {useAuthorization} from './providers/AuthorizationProvider';
 
 export const APP_IDENTITY = {
-  name: 'Solana dApp Scaffold',
+  name: 'Stabit',
 };
 
 export default function SignTransactionButton() {

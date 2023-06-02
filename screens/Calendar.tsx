@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {Pressable, ScrollView, StyleSheet, Text, View} from 'react-native';
+import {ScrollView, StyleSheet, Text, View} from 'react-native';
 
 import {
   useAuthorization,
@@ -10,14 +10,13 @@ import ConnectButton from '../components/ConnectButton';
 import { Habit } from '../components/Habit';
 import { Menu } from '../components/Menu'
 import { Colors } from '../components/Colors'
-import { findNFT, underdog } from '../src';
+import { findNFT } from '../src';
 
-export default function MainScreen({ navigation }: any) {
+export default function Calendar({ navigation }: any) {
   const {connection} = useConnection();
   const {selectedAccount} = useAuthorization();
   const [balance, setBalance] = useState<number | null>(null);
   const [nfts, setNFTs] = useState<any>([]);
-  const [loading, setLoading] = useState(false);
 
   const fetchAndUpdateBalance = useCallback(
     async (account: Account) => {
@@ -41,59 +40,33 @@ export default function MainScreen({ navigation }: any) {
       return;
     }
     async function findOwnedNFT() {
-      setLoading(true)
       const data = await findNFT(selectedAccount?.publicKey);
+      console.log('nft', data)
       setNFTs(await data.results);
-      setLoading(false)
     }
     findOwnedNFT();
-  }, [selectedAccount]);
+  }, []);
 
-  if (loading) {
-    return (
-      <View style={styles.container}>
-        <Text>Loading</Text>        
-      </View>
-    )
-  } else {
-    return (
-      <View style={styles.container}>
-        <View style={styles.mainContainer}>
-          <Text style={styles.title}>Your habits and stakes, all in one place</Text>
-          {
-            selectedAccount ? (
-              <></>
-            ) : (
-              <ConnectButton title='Connect'/>
-            )
-          }
+  return (
+    <View style={styles.container}>
+        <Text>Upcoming Check Ins</Text>
+        <View style={styles.contentContainer}>
+            <Text>Habit 1 time date</Text>
+            <Text>Habit 1 time date</Text>
+            <Text>Habit 1 time date</Text>
         </View>
+        <Text>Set Milestone</Text>
+        <Text style={styles.title}>Your Milestones</Text>
         {
-            selectedAccount ? (
-              <View style={styles.contentContainer}>
-                <Text style={styles.title}>Your {nfts.length} Habits</Text>
-                  {
-                    nfts?.map((nft: any, index: number) => {
-                      return (
-                        <Habit nft={nft} key={`${nft.name}_${index}`} imageURI={nft.image} name={nft.name} attributes={nft.attributes}/>
-                      )
-                    })
-                  }
-                  <Text style={styles.title}>Press and hold icon to complete check in.</Text>
-                </View>
-            ) : (
-              <Text style={styles.title}>Connect your Solana wallet to view your habits</Text>
+          nfts?.map((nft: any) => {
+            return (
+              <Habit key={`${nft.name}_${nft.id}`} imageURI={nft.image} name={nft.name} attributes={nft.attributes} nft={nft}/>
             )
-          }
-          {
-            selectedAccount ? (
-              <Menu navigation={navigation}/>
-            ): (
-              <></>
-            )
-          }
+          })
+        }
+        <Menu navigation={navigation}/>
     </View>
-  )};
+  );
 }
 
 const styles = StyleSheet.create({
@@ -110,6 +83,7 @@ const styles = StyleSheet.create({
     paddingVertical: 24,
     paddingHorizontal: 32,
     borderRadius: 24,
+    height: 222,
     alignItems: "center",
   },
   title: {

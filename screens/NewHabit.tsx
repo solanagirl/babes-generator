@@ -1,149 +1,128 @@
 
 
-import React, {useCallback, useEffect, useState} from 'react';
-import {ScrollView, StyleSheet, Text, View, Pressable, TextInput, Image} from 'react-native';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
+import {Animated, ScrollView, StyleSheet, Text, View, Pressable, TextInput, Image} from 'react-native';
 
-import {Section} from '../components/Section';
-import ConnectButton from '../components/ConnectButton';
-import AccountInfo from '../components/AccountInfo';
 import {
   useAuthorization,
-  Account,
 } from '../components/providers/AuthorizationProvider';
 import {useConnection} from '../components/providers/ConnectionProvider';
-import DisconnectButton from '../components/DisconnectButton';
-import RequestAirdropButton from '../components/RequestAirdropButton';
-import SignMessageButton from '../components/SignMessageButton';
-import SignTransactionButton from '../components/SignTransactionButton';
+import { Colors } from '../components/Colors'
 import { Menu } from '../components/Menu';
 import { Habit } from '../components/Habit';
-import mintNFT, { makeMetadataURI } from '../src/mintNFT'
+import { createNFT, findNFT } from '../src';
 
 export default function NewHabit({navigation}: any) {
   const {connection} = useConnection();
   const {selectedAccount} = useAuthorization();
-  const [balance, setBalance] = useState<number | null>(null);
   const [newOrQuit, setNewOrQuit] = useState('');
   const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
   const [state, setState] = useState('');
   const [frequency, setFrequency] = useState('');
-  const [icon, setIcon] = useState('');
+  const [currentIcon, setCurrentIcon] = useState('');
+  const [data, setData] = useState<any>();
+  const address = selectedAccount!.publicKey;
 
-  const fetchAndUpdateBalance = useCallback(
-    async (account: Account) => {
-      console.log('Fetching balance for: ' + account.publicKey);
-      const fetchedBalance = await connection.getBalance(account.publicKey);
-      console.log('Balance fetched: ' + fetchedBalance);
-      setBalance(fetchedBalance);
-    },
-    [connection],
-  );
-  const uri = '';
-
-  async function mintHabitNFT() {
-    const config = {
-      name: name,
-      description: description,
+  async function mintHabitNFT(imageURI: string) {
+    const attributes = {
       status: newOrQuit,
-      frequency: frequency,
-      icon: icon  
+      frequency: frequency
     }
 
-    console.log(selectedAccount)
-    
-    const response = await mintNFT({selectedAccount, connection, config, uri});
-    console.log(response);
+    const response = await createNFT(name, address, imageURI, attributes);
+    setData(response)
+    setState('success')  
   }
 
-  async function makeMetadataAccount(name: string, description: string, link: string) {
-    const config = {
-      name: name,
-      description: description,
-      imageURI: link
-    }
-    const uri = await makeMetadataURI({connection, config});
-    console.log(uri)
-  }
+
+  const icons = [
+    'https://cdn-icons-png.flaticon.com/512/2043/2043787.png',
+    'https://cdn-icons-png.flaticon.com/512/5223/5223155.png',
+    'https://cdn-icons-png.flaticon.com/512/2829/2829162.png',
+    'https://cdn-icons-png.flaticon.com/512/2553/2553628.png',
+    'https://cdn-icons-png.flaticon.com/512/883/883378.png',
+    'https://cdn-icons-png.flaticon.com/512/7081/7081325.png',
+    'https://cdn-icons-png.flaticon.com/512/525/525853.png'
+      ]
 
   useEffect(() => {
     if (!selectedAccount) {
       return;
     }
-    fetchAndUpdateBalance(selectedAccount);
-  }, [fetchAndUpdateBalance, selectedAccount]);
+    async function findOwnedNFT() {
+      const data = await findNFT(address);
+      console.log('nft', data)
+    }
+    findOwnedNFT();
+  }, [data]);
 
   switch (state) {
-    case 'nft': 
+    case 'success':
       return (
         <View style={styles.mainContainer}>
           <Menu navigation={navigation}/>
           <View>
-            <Text style={styles.subtitle}>Choose an Icon!</Text>
-            <ScrollView contentContainerStyle={styles.contentContainer} horizontal={true} showsHorizontalScrollIndicator={true} fadingEdgeLength={100} persistentScrollbar={true}>
-              <Pressable style={icon == 'checklist' ? styles.iconBackgroundPressed : styles.iconBackground} onPress={() => {setIcon('checklist'); makeMetadataAccount('tasks', 'Have you done your tasks yet? Check in', '../img/checklist.png')}} >
-                <Image source={require('../img/checklist.png')} alt='checklist' style={styles.icon}/>
-              </Pressable>
-              <Pressable style={icon == 'medicine' ? styles.iconBackgroundPressed : styles.iconBackground} onPress={() => {setIcon('medicine')}}>
-                <Image source={require('../img/medicine.png')} alt='medicine' style={styles.icon}/>
-              </Pressable>
-              <Pressable style={icon == 'person' ? styles.iconBackgroundPressed : styles.iconBackground} onPress={() => {setIcon('person')}}>
-                <Image source={require('../img/person.png')} alt='person' style={styles.icon}/>
-              </Pressable>
-              <Pressable style={icon == 'self-love' ? styles.iconBackgroundPressed : styles.iconBackground} onPress={() => {setIcon('self-love')}}>
-                <Image source={require('../img/self-love.png')} alt='self-love' style={styles.icon}/>
-              </Pressable>
-              <Pressable style={icon == 'sleeping' ? styles.iconBackgroundPressed : styles.iconBackground} onPress={() => {setIcon('sleeping')}}>
-                <Image source={require('../img/sleeping.png')} alt='sleeping' style={styles.icon}/>
-              </Pressable>
-              <Pressable style={icon == 'water' ? styles.iconBackgroundPressed : styles.iconBackground} onPress={() => {setIcon('water')}}>
-                <Image source={require('../img/water-bottle.png')} alt='water' style={styles.icon}/>
-              </Pressable>
-              <Pressable style={icon == 'yoga' ? styles.iconBackgroundPressed : styles.iconBackground} onPress={() => {setIcon('yoga')}}>
-                <Image source={require('../img/yoga.png')} alt='yoga' style={styles.icon}/>
-              </Pressable>
+            <Text style={styles.subtitle}>Successfully created new habit!</Text>
+            <Habit imageURI={data.image} attributes={data.attributes} name={data.title} nft={data}></Habit>
+          </View>
+          <View>
+            <Text style={styles.subtitle}>Set your milestone</Text>
+            <ScrollView>
+              
             </ScrollView>
           </View>
-          <Text style={styles.subtitle}>Keep yourself accountable, track your progress with a token.</Text>
-          {
-              icon !== '' ? (
-                <Pressable
-                onPress={() => {setState('nft'); mintHabitNFT()}} style={styles.nextButton}>
-                  <View style={frequency !== '' && name !== '' && description !=='' ? styles.glow : styles.disabled}></View>
-                    <Text style={styles.text}>Create habit</Text>
-                </Pressable>
-              ) : (
-                <></>
+        </View>
+      )
+    case 'loading':
+      return (
+        <View style={styles.mainContainer}>
+          <Text style={styles.subtitle}>Loading</Text>
+        </View>
+      )
+    case 'nft': 
+      return (
+        <View style={styles.mainContainer}>
+          <Menu navigation={navigation}/>
+            <Text style={styles.subtitle}>Choose an Icon for {name}</Text>
+            <View style={styles.contentContainer}>
+            {
+              icons.map(icon => 
+                  <Pressable onLongPress={() => {setCurrentIcon(icon); mintHabitNFT(currentIcon); setTimeout(() => {setState('loading')}, 900)}} key={icon} style={icon == currentIcon ? styles.iconBackgroundPressed : styles.iconBackground}>
+                    <Image source={{uri: icon}} style={styles.icon}></Image>
+                  </Pressable>
               )
             }
+            </View>
+          <Text style={styles.subtitle}>Track your progress with tokens. Press and hold to mint your new habit.</Text>
         </View>
       )
     case 'info':
       return (
         <View style={styles.mainContainer}>
           <Menu navigation={navigation}/>
-          <Text style={styles.subtitle}>Track your new beginnings.</Text>
-          <TextInput onChangeText={(text) => {setName(text)}} placeholder='Name your habit' value={name} style={styles.input}></TextInput>
-          <TextInput onChangeText={(text) => {setDescription(text)}} placeholder='Describe your goals' value={description} style={styles.inputLong} multiline={true}></TextInput>
-          <Text>How often shall we check in?</Text>
-          <View style={styles.buttonRow}>
-            <Pressable onPress={() => {setFrequency('daily')}} style={frequency == 'daily' ? styles.buttonPressed : styles.button}>
-              <Text>Daily</Text>
-            </Pressable>
-            
-            <Pressable onPress={() => {setFrequency('weekly')}} style={frequency == 'weekly' ? styles.buttonPressed : styles.button}>
-              <Text>Weekly</Text>
-            </Pressable>
-            
-            <Pressable onPress={() => {setFrequency('monthly')}} style={frequency == 'monthly' ? styles.buttonPressed : styles.button}>
-              <Text>Monthly</Text>
-            </Pressable>
+          <View style={styles.topContainer}>
+            <Text style={styles.subtitle}>Track your new beginnings.</Text>
+            <TextInput onChangeText={(text) => {setName(text); StyleSheet.compose(styles.button, styles.buttonPressed)}} placeholder='Name your habit' value={name} style={styles.input}></TextInput>
+            <Text>How often shall we check in?</Text>
+            <View style={styles.buttonRow}>
+              <Pressable onPress={() => {setFrequency('daily')}} style={frequency == 'daily' ? styles.buttonPressed : styles.button}>
+                <Text>Daily</Text>
+              </Pressable>
+              
+              <Pressable onPress={() => {setFrequency('weekly')}} style={frequency == 'weekly' ? styles.buttonPressed : styles.button}>
+                <Text>Weekly</Text>
+              </Pressable>
+              
+              <Pressable onPress={() => {setFrequency('monthly')}} style={frequency == 'monthly' ? styles.buttonPressed : styles.button}>
+                <Text>Monthly</Text>
+              </Pressable>
+            </View>
           </View>
           {
               frequency !== '' ? (
                 <Pressable
                 onPress={() => {setState('nft')}} style={styles.nextButton}>
-                  <View style={frequency !== '' && name !== '' && description !=='' ? styles.glow : styles.disabled}></View>
+                  <View style={frequency !== '' && name !== '' ? styles.glow : styles.disabled}></View>
                     <Text style={styles.text}>Next</Text>
                 </Pressable>
           
@@ -156,20 +135,21 @@ export default function NewHabit({navigation}: any) {
     default:
       return (
         <>
+          <Menu navigation={navigation}/>
           <View style={styles.mainContainer}>
-            <Menu navigation={navigation}/>
-            <Text style={styles.subtitle}>What is your goal?</Text>
-            <Pressable style={newOrQuit == 'new' ? styles.buttonPressed : styles.button} onPress={() => {setNewOrQuit('new'); setState('selected')}}>
-              <Text style={styles.buttonText}>Start something new</Text>
-            </Pressable>
-            <Pressable style={newOrQuit == 'quit' ? styles.buttonPressed : styles.button}>
-              <Text style={styles.buttonText} onPress={() => {setNewOrQuit('quit'); setState('selected')}}>Quit an Old Habit</Text>
-            </Pressable>
+            <View style={styles.topContainer}>
+              <Text style={styles.subtitle}>What is your goal?</Text>
+              <Pressable style={newOrQuit == 'new' ? styles.buttonPressed : styles.button} onPress={() => {setNewOrQuit('new'); setState('selected')}}>
+                <Text style={styles.buttonText}>Start something new</Text>
+              </Pressable>
+              <Pressable style={newOrQuit == 'quit' ? styles.buttonPressed : styles.button}>
+                <Text style={styles.buttonText} onPress={() => {setNewOrQuit('quit'); setState('selected')}}>Quit an Old Habit</Text>
+              </Pressable>
+            </View>
             {
               state == 'selected' ? (
                 <Pressable
                 onPress={() => {setState('info')}} style={styles.button}>
-                  <View style={styles.glow}></View>
                     <Text style={styles.text}>Next</Text>
                 </Pressable>
           
@@ -185,48 +165,71 @@ export default function NewHabit({navigation}: any) {
 
 const styles = StyleSheet.create({
   mainContainer: {
-    padding: 16,
-    flex: 1,
-    backgroundColor: '#191D32',
+    backgroundColor: Colors.background,
     paddingHorizontal: 48,
-    paddingVertical: 24,
-    paddingBottom: 169,
-    rowGap: 16,
+    paddingBottom: 256,
+    paddingTop: 64,
+    flex: 1,
+    rowGap: 24,
+    minHeight: 800,
+    justifyContent: 'space-between'
+  },
+  itemContainer: {
+    height: 300,
+    gap: 12
   },
   contentContainer: {
     gap: 8,
-    paddingHorizontal: 8,
     marginTop: 12,
-    paddingVertical: 24
+    paddingVertical: 12,
+    flex: 1,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    minHeight: 256,
+    maxHeight: 420
+  },
+  topContainer: {
+    height: '70%',
+    gap: 36
   },
   icon: {
     width: 64,
     height: 64,
+    zIndex: 1
   },
   iconBackground: {
-    padding: 12,
-    backgroundColor: '#C1B2C7',
+    backgroundColor: Colors.font,
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 48
+    maxWidth: 92,
+    maxHeight: 92,
+    minWidth: 81,
+    minHeight: 81,
+    borderRadius: 48,
+    padding: 12
   },
   iconBackgroundPressed: {
     padding: 12,
-    backgroundColor: '#BA2C73',
+    backgroundColor: Colors.pink,
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 48
+    borderRadius: 48,
+    minWidth: 81,
+    minHeight: 81,
+    maxHeight: 92,
+    maxWidth: 92,    
   },
   subtitle: {
     fontSize: 24,
-    color: '#C1B2C7'
+    color: Colors.font
   },
   button: {
-    backgroundColor: '#282F44',
+    backgroundColor: Colors.component,
     paddingVertical: 12,
     borderRadius: 12,
+    maxHeight: 81,
     flex: 1,
     flexDirection: 'column',
     alignItems: 'center',
@@ -234,10 +237,11 @@ const styles = StyleSheet.create({
 
   },
   buttonPressed: {
-    backgroundColor: '#BA2C73',
+    backgroundColor: Colors.pink,
     paddingVertical: 12,
     borderRadius: 12,
     flex: 1,
+    maxHeight: 81,
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center'
@@ -245,13 +249,13 @@ const styles = StyleSheet.create({
   buttonText: {
     textAlign: 'center',
     fontSize: 18,
-    color: '#C1B2C7'
+    color: Colors.font
   }, 
   nextButton: {
     flex: 1,
     flexDirection: 'column',
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   input: {
     height: 56,

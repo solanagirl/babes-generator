@@ -8,20 +8,30 @@ import {
   View,
 } from 'react-native';
 import {Colors} from './Colors';
+import moment from 'moment';
 
+type Props = {
+  date: boolean
+}
+export function Header({date}: Props) {
+  const currentDate = moment().format("MM/DD/YYYY");
 
-export function Header() {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.container}>
-      <Text style={styles.baseText}>
-        <Text style={styles.title}>
-          Hello Amy!
+  if (date) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.baseText}>
+          <Text style={styles.title}>
+            {currentDate}
+          </Text>
         </Text>
-      </Text>
-      <Button color={Colors.component} title="ajwdoa"/>
-    </View>
-  );
+      </View>
+    );  
+  } else {
+    return (
+      <View style={styles.container}>
+      </View>
+    );  
+  }
 }
 
 const styles = StyleSheet.create({

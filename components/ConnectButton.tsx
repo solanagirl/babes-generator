@@ -28,29 +28,19 @@ export default function ConnectButton(props: Props) {
     <Pressable
       {...props}
       disabled={authorizationInProgress}
-      onPress={handleConnectPress} style={styles.button}>
+      onPress={handleConnectPress} style={styles.container}>
         {/* <View style={styles.glow}></View> */}
-        <View style={styles.container}>
           <Text style={styles.text}>Connect Wallet</Text>
-        </View>
       </Pressable>
   );
 }
 
 export const styles = StyleSheet.create(({
-  button: {
-    flex: 1,
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: Colors.purple,
-  },
   container: {
     backgroundColor: Colors.pink,
     borderRadius: 24,
     padding: 18,
-    width: '100%',
-    height: '100%'
+    height: 91
   },
   text: {
     color: Colors.font,
