@@ -1,10 +1,11 @@
 import {transact} from '@solana-mobile/mobile-wallet-adapter-protocol-web3js';
 import React, {ComponentProps, useState, useCallback} from 'react';
-import {Button, Pressable, StyleSheet, View, Text} from 'react-native';
+import {Button, Pressable, StyleSheet, View, Text, TouchableOpacity} from 'react-native';
 
 import {useAuthorization} from './providers/AuthorizationProvider';
 import {useConnection} from './providers/ConnectionProvider';
 import {Colors} from './Colors';
+import LinearGradient from 'react-native-linear-gradient';
 
 type Props = Readonly<ComponentProps<typeof Button>>;
 
@@ -25,40 +26,43 @@ export default function ConnectButton(props: Props) {
     }
   }, [authorizationInProgress, authorizeSession]);
   return (
-    <Pressable
+    <TouchableOpacity // was originally pressable component
+      activeOpacity={0.5} 
       {...props}
       disabled={authorizationInProgress}
-      onPress={handleConnectPress} style={styles.button}>
+      onPress={handleConnectPress}
+      style={{ justifyContent: 'center', alignItems: 'center', paddingTop: 30}}>
       {/* <View style={styles.glow}></View> */}
-      <View style={styles.container}>
-        <Text style={styles.text}>Connect Wallet</Text>
-      </View>
-    </Pressable>
+      <LinearGradient 
+        colors={[Colors.purple, Colors.blue, Colors.mint]} 
+        start={{x: 0.2, y: 0}} 
+        end={{x: 1, y: 1.8}}
+        // locations={[0,0.5,0.6]} 
+        style={styles.button}>
+        <Text style={styles.baseText}>
+          <Text style={styles.text}>
+            Connect Wallet
+          </Text>
+        </Text>
+      </LinearGradient>
+    </TouchableOpacity>
   );
 }
 
 export const styles = StyleSheet.create(({
   button: {
-    flex: 1,
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: Colors.purple,
-  },
-  container: {
-    backgroundColor: Colors.pink,
     borderRadius: 30,
+    height: 80,
+    justifyContent: 'center',
     padding: 20,
-    width: '100%',
-    height: '100%'
   },
   text: {
     color: Colors.font,
     textAlign: 'center',
-    width: '100%',
-    height: '100%',
-    textAlignVertical: 'center',
     fontSize: 20,
+    fontWeight: 'bold',
+  },
+  baseText: {
     fontFamily: 'Nunito',
   },
   // glow: {

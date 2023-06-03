@@ -11,7 +11,6 @@ export default function DisconnectButton(props: Props) {
   return (
     <Button
       {...props}
-      color="red"
       onPress={() => {
         transact(async wallet => {
           await deauthorizeSession(wallet);

@@ -1,6 +1,7 @@
 import {transact} from '@solana-mobile/mobile-wallet-adapter-protocol-web3js';
 import React, {ComponentProps, useState, useCallback} from 'react';
-import {Button, Image, ImageSourcePropType, Pressable, StyleSheet, View} from 'react-native';
+import {Button, Image, ImageSourcePropType, Pressable, StyleSheet, TouchableOpacity, View} from 'react-native';
+import { Colors } from "./Colors"
 
 import {useAuthorization} from './providers/AuthorizationProvider';
 import {useConnection} from './providers/ConnectionProvider';
@@ -15,22 +16,22 @@ export const Menu = ({navigation}: Props) => {
     if (expanded) {
         return (
             <View style={styles.container}>
-                <Pressable style={styles.button} onPress={() => {setExpanded(!expanded)}}>
-                    <Image source={require('../img/stake.png')} style={styles.icon}/>
-                </Pressable>
+                <TouchableOpacity activeOpacity={0.5} style={styles.button} onPress={() => {setExpanded(!expanded)}}>
+                    <Image source={require('../img/menu-regular-24.png')} style={styles.iconLarge} tintColor={Colors.font}/>
+                </TouchableOpacity>
                 <View style={styles.buttonGroup}>
-                    <Pressable style={styles.smallButton} onPress={() => {setExpanded(!expanded); navigation.navigate('NewHabit')}}>
-                        <Image source={require('../img/add.png')} style={styles.icon}/>
-                    </Pressable>
-                    <Pressable style={styles.smallButton} onPress={() => {setExpanded(!expanded)}}>
-                        <Image source={require('../img/calendar.png')} style={styles.icon}/>
-                    </Pressable>
-                    <Pressable style={styles.smallButton} onPress={() => {setExpanded(!expanded)}}>
-                        <Image source={require('../img/analytics.png')} style={styles.icon}/>
-                    </Pressable>
-                    <Pressable style={styles.smallButton} onPress={() => {setExpanded(!expanded); navigation.navigate('Home')}}>
-                        <Image source={require('../img/home.png')} style={styles.icon}/>
-                    </Pressable>
+                    <TouchableOpacity activeOpacity={0.5} style={styles.smallButton} onPress={() => {setExpanded(!expanded); navigation.navigate('NewHabit')}}>
+                        <Image source={require('../img/plus-regular-24.png')} style={styles.icon} tintColor={Colors.font}/>
+                    </TouchableOpacity>
+                    <TouchableOpacity activeOpacity={0.5} style={styles.smallButton} onPress={() => {setExpanded(!expanded); navigation.navigate('Calendar')}}>
+                        <Image source={require('../img/calendar-regular-24.png')} style={styles.icon} tintColor={Colors.font}/>
+                    </TouchableOpacity>
+                    <TouchableOpacity activeOpacity={0.5} style={styles.smallButton} onPress={() => {setExpanded(!expanded); navigation.navigate('Analytics')}}>
+                        <Image source={require('../img/line-chart-regular-24.png')} style={styles.icon} tintColor={Colors.font}/>
+                    </TouchableOpacity>
+                    <TouchableOpacity activeOpacity={0.5} style={styles.smallButtonBottom} onPress={() => {setExpanded(!expanded); navigation.navigate('Home')}}>
+                        <Image source={require('../img/home-alt-2-regular-24.png')} style={styles.icon} tintColor={Colors.font}/>
+                    </TouchableOpacity>
                 </View>
             </View>
     
@@ -38,11 +39,11 @@ export const Menu = ({navigation}: Props) => {
     } else {
         return (
             <View style={styles.container}>
-                <Pressable style={styles.button} onPress={() => {setExpanded(!expanded)}}>
-                    <Image source={require('../img/stake.png')} style={styles.icon}/>
-                </Pressable>
+                <TouchableOpacity activeOpacity={0.5} style={styles.button} onPress={() => {setExpanded(!expanded)}}>
+                    <Image source={require('../img/menu-regular-24.png')} style={styles.iconLarge} tintColor={Colors.font}/>
+                </TouchableOpacity>
             </View>
-            );        
+        );        
     }
 }
 
@@ -51,44 +52,53 @@ const styles = StyleSheet.create({
       position: 'absolute',
       bottom: 0,
       right: 0,
-      paddingEnd: 24,
-      paddingBottom: 48,
+      paddingEnd: 30,
+      paddingBottom: 30,
       flex: 1,
       flexDirection: 'column-reverse',
       alignItems: 'center',
       zIndex: 1,
-      elevation: 1
     },
     button: {
-        height: 81,
-        width: 81,
-        padding: 2,
-        backgroundColor: '#C1B2C7',
-        borderRadius: 360,
+        height: 80,
+        width: 80,
+        backgroundColor: Colors.component,
+        borderRadius: 999,
         flex: 1,
         justifyContent: 'center',
-        alignItems: 'center',  
-        elevation: 1
+        alignItems: 'center', 
     },
     smallButton: {
-        width: 64,
-        height: 38,  
-        backgroundColor: '#C1B2C7',
-        borderRadius: 360,
-        marginBottom: 24,
+        width: 60,
+        height: 40,  
+        backgroundColor: Colors.component,
+        borderRadius: 999,
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',  
-        elevation: 1
+    },
+    smallButtonBottom: {
+        width: 60,
+        height: 40,  
+        backgroundColor: Colors.component,
+        borderRadius: 999,
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',  
+        elevation: 1,
+        marginBottom: 20
     },
     icon: {
       resizeMode: 'contain',
-      width: 48,
-      height: 48,  
+      width: 30,
+    },
+    iconLarge: {
+        resizeMode: 'contain',
+        width: 40,
     },
     buttonGroup: {
       flexDirection: 'column',
-      rowGap: 8
+      rowGap: 20
     },
   });
   

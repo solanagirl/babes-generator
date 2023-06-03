@@ -4,5 +4,5 @@ module.exports = {
       'module:metro-react-native-babel-preset',
       {unstable_transformProfile: 'hermes-stable'},
     ],
-  ],
+  ]
 };
