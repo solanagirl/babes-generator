@@ -40,7 +40,7 @@ export default function Calendar({ navigation }: any) {
       return;
     }
     async function findOwnedNFT() {
-      const data = await findNFT(selectedAccount?.publicKey);
+      const data = await findNFT(selectedAccount!.publicKey);
       setNFTs(await data.results);
     }
     findOwnedNFT();

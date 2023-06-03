@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { Colors } from './Colors';
 import Burn from './Burn';
-import StabitButton from './StabitButton';
+import Stake from './Stake';
 
 type Props = Readonly<{
   imageURI: string,
@@ -30,7 +30,7 @@ export function Habit({imageURI, attributes, name, nft}: Props) {
         <Text style={styles.text}>{attributes.frequency} reminders</Text>
       </ScrollView>
       <View style={styles.options}>
-        <StabitButton onPress={() => {}}></StabitButton>
+        <Stake nft={nft}></Stake>
         <Burn nft={nft}></Burn>
       </View>
     </View>

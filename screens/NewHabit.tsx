@@ -51,7 +51,6 @@ export default function NewHabit({navigation}: any) {
     }
     async function findOwnedNFT() {
       const data = await findNFT(address);
-      console.log('nft', data)
     }
     findOwnedNFT();
   }, [data]);

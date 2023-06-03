@@ -10,7 +10,7 @@ import ConnectButton from '../components/ConnectButton';
 import { Habit } from '../components/Habit';
 import { Menu } from '../components/Menu'
 import { Colors } from '../components/Colors'
-import { findNFT, underdog } from '../src';
+import { findNFT } from '../src';
 
 export default function MainScreen({ navigation }: any) {
   const {connection} = useConnection();
@@ -42,13 +42,12 @@ export default function MainScreen({ navigation }: any) {
     }
     async function findOwnedNFT() {
       setLoading(true)
-      const data = await findNFT(selectedAccount?.publicKey);
+      const data = await findNFT(selectedAccount!.publicKey);
       setNFTs(await data.results);
-      console.log(nfts)
       setLoading(false)
     }
     findOwnedNFT();
-  }, [balance]);
+  }, [selectedAccount, balance]);
 
   if (loading) {
     return (

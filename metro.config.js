@@ -13,10 +13,11 @@ module.exports = {
         inlineRequires: true,
       },
     }),
-    resolver: {
-      nodeModulesPaths: ['./node_modules'], // update to resolver
-      sourceExts: ['jsx', 'js', 'ts', 'tsx', 'cjs', 'json'],
-    },
-    watchFolders: ['./node_modules'], // update to resolver
+  },
+  resolver: {
+    nodeModulesPaths: ['./node_modules'], // update to resolver
+    sourceExts: ['jsx', 'js', 'ts', 'tsx', 'cjs', 'json'],
+    extraNodeModules: require('node-libs-react-native'),
+    watchFolders: ['./node_modules'], // update to resolvers
   },
 };
