@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {Pressable, ScrollView, StyleSheet, Text, View} from 'react-native';
+import {Image, ImageBackground, Pressable, ScrollView, StyleSheet, Text, View} from 'react-native';
 
 import {
   useAuthorization,
@@ -7,6 +7,7 @@ import {
 } from '../components/providers/AuthorizationProvider';
 import {useConnection} from '../components/providers/ConnectionProvider';
 import ConnectButton from '../components/ConnectButton';
+import DisconnectButton from '../components/DisconnectButton';
 import { Habit } from '../components/Habit';
 import { Menu } from '../components/Menu'
 import { Colors } from '../components/Colors'
@@ -43,15 +44,22 @@ export default function MainScreen({ navigation }: any) {
 
   if (loading) {
     return (
-      <View style={styles.container}>
-        <Text>Loading</Text>        
+      <View style={styles.contentContainer}>
+        <Text style={styles.baseText}>
+          <Text style={styles.title}>Loading...</Text>
+        </Text>
       </View>
     )
   } else {
     return (
+      <ImageBackground source={require('../img/backgroundGradient.png')} style={styles.backgroundImage}>
       <View style={styles.container}>
         <View style={styles.mainContainer}>
-          <Text style={styles.title}>Your habits and stakes, all in one place</Text>
+          <Text style={styles.baseText}>
+            <Text style={styles.title}>
+              Your habits and stakes,{"\n"}all in one place.
+            </Text>
+          </Text>
           {
             selectedAccount ? (
               <></>
@@ -63,6 +71,7 @@ export default function MainScreen({ navigation }: any) {
         {
             selectedAccount ? (
               <View style={styles.contentContainer}>
+              <Text style={styles.baseText}>
                 <Text style={styles.title}>Your {nfts.length} Habits</Text>
                   {
                     nfts?.map((nft: any, index: number) => {
@@ -73,46 +82,60 @@ export default function MainScreen({ navigation }: any) {
                   }
               </View>
             ) : (
-              <Text style={styles.title}>Connect your Solana wallet to view your habits</Text>
+              <Text style={styles.baseText}>
+                <Text style={styles.title}>Connect your Solana Wallet{"\n"}to view your habits.</Text>
+              </Text>
             )
           }
           {
             selectedAccount ? (
-              <Menu navigation={navigation}/>
-            ): (
               <></>
+              // <Menu navigation={navigation}/>
+            ): (
+              // <></>
+              <Menu navigation={navigation}/>
             )
           }
     </View>
+    </ImageBackground>
   )};
 }
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 48,
-    paddingVertical: 12,
+    paddingHorizontal: 30,
+    paddingVertical: 20,
     backgroundColor: Colors.background,
     flex: 1,
-    rowGap: 24,
-    height: '100%'
+    rowGap: 20,
+    height: '100%',
+    width: '100%',
   },
   mainContainer: {
     backgroundColor: Colors.component,
-    paddingVertical: 24,
-    paddingHorizontal: 32,
-    borderRadius: 24,
+    padding: 30,
+    borderRadius: 30,
+    width: '100%',
     alignItems: "center",
+    justifyContent: "center",
   },
   title: {
-    fontSize: 24,
+    fontSize: 20,
     color: Colors.font,
-    marginBottom: 12,
+    fontWeight: 'bold',
+  },
+  contentContainer: {
+    gap: 10,
+  },
+  baseText: {
     fontFamily: 'Nunito',
     textAlign: 'center',
   },
-  contentContainer: {
-    gap: 8,
-    paddingHorizontal: 8,
-    marginVertical: 8,
+  backgroundImage: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
   }
 });

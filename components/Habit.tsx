@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
     maxHeight: 91,
     width: '100%',
     backgroundColor: Colors.component,
-    borderRadius: 12,
+    borderRadius: 30,
     flex: 1,
     flexDirection: 'row',
     gap: 8,

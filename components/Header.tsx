@@ -1,7 +1,8 @@
 import React from 'react';
 import {
-  Button,
+  TouchableOpacity,
   ImageBackground,
+  Image,
   StyleSheet,
   Text,
   useColorScheme,
@@ -14,8 +15,8 @@ type Props = {
   date: boolean
 }
 export function Header({date}: Props) {
-  const currentDate = moment().format("MM/DD/YYYY");
-
+  const currentDate = moment().format('MMM d, YYYY');
+  //   const isDarkMode = useColorScheme() === 'dark';
   if (date) {
     return (
       <View style={styles.container}>
@@ -24,11 +25,18 @@ export function Header({date}: Props) {
             {currentDate}
           </Text>
         </Text>
+        <TouchableOpacity activeOpacity={0.5}>
+          <View style={styles.Button}>
+            <Image style={{height:30, width:30}} source={require('../img/cog-solid-24.png')} tintColor={Colors.font}></Image>
+          </View>
+        </TouchableOpacity>
       </View>
-    );  
+    ) ;
   } else {
     return (
       <View style={styles.container}>
+        <Text style={styles.title}>
+        </Text>
       </View>
     );  
   }
@@ -36,16 +44,22 @@ export function Header({date}: Props) {
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: 25,
-    paddingHorizontal: 40,
-    backgroundColor: Colors.background,
+    paddingTop: 30,
+    paddingHorizontal: 30,
+    flexDirection:'row',
+    justifyContent:'space-between',
   },
   baseText: {
     fontFamily: 'Nunito',
   },
   title: {
     color: Colors.font,
-    fontSize: 32,
+    fontSize: 30,
     fontWeight: 'bold',
   },
+  Button: {
+    padding: 7.5, 
+    borderRadius: 30,
+    backgroundColor: Colors.component,
+  }
 });
