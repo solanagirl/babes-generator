@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {ScrollView, StyleSheet, Text, View} from 'react-native';
+import {ScrollView, StyleSheet, Text, View, ImageBackground} from 'react-native';
 
 import {
   useAuthorization,
@@ -43,6 +43,7 @@ export default function Calendar({ navigation }: any) {
 
 
   return (
+    <ImageBackground source={require('../img/backgroundGradient.png')} style={styles.backgroundImage}>
     <View style={styles.container}>
         <Text>Upcoming Check Ins</Text>
         <View style={styles.contentContainer}>
@@ -61,6 +62,7 @@ export default function Calendar({ navigation }: any) {
         }
         <Menu navigation={navigation}/>
     </View>
+    </ImageBackground>
   );
 }
 
@@ -92,5 +94,12 @@ const styles = StyleSheet.create({
     gap: 8,
     paddingHorizontal: 8,
     marginVertical: 8,
+  },
+  backgroundImage: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
   }
 });

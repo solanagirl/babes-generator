@@ -44,10 +44,13 @@ export default function MainScreen({ navigation }: any) {
 
   if (loading) {
     return (
-      <View style={styles.contentContainer}>
+      <View>
+            <ImageBackground source={require('../img/backgroundGradient.png')} style={styles.backgroundImage} />
+            <View style={styles.contentContainer}>
         <Text style={styles.baseText}>
           <Text style={styles.title}>Loading...</Text>
         </Text>
+      </View>
       </View>
     )
   } else {
@@ -90,8 +93,7 @@ export default function MainScreen({ navigation }: any) {
           }
           {
             selectedAccount ? (
-              <></>
-              // <Menu navigation={navigation}/>
+                <Menu navigation={navigation}/>
             ): (
               // <></>
               <Menu navigation={navigation}/>

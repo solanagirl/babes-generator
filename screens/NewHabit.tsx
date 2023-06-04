@@ -59,48 +59,54 @@ export default function NewHabit({ navigation }: any) {
   //   }
   //   findOwnedNFT();
   // }, [data]);
-
+console.log(state)
   switch (state) {
     case 'success':
       setTimeout(() => {
         navigation.navigate('Calendar')
       }, 1500)
       return (
-        <View style={styles.mainContainer}>
-          <Menu navigation={navigation} />
-          <View>
-            <Text style={styles.subtitle}>Successfully created new habit!</Text>
-          </View>
-          <View>
-            <Text style={styles.subtitle}>Set your milestone</Text>
-            <ScrollView>
+        <ImageBackground source={require('../img/backgroundGradient.png')} style={styles.backgroundImage}>
+          <View style={styles.mainContainer}>
+            <Menu navigation={navigation} />
+            <View>
+              <Text style={styles.subtitle}>Successfully created new habit!</Text>
+            </View>
+            <View>
+              <Text style={styles.subtitle}>Set your milestone</Text>
+              <ScrollView>
 
-            </ScrollView>
+              </ScrollView>
+            </View>
           </View>
-        </View>
+        </ImageBackground>
       )
     case 'loading':
       return (
-        <View style={styles.mainContainer}>
-          <Text style={styles.subtitle}>Loading</Text>
-        </View>
+          <ImageBackground source={require('../img/backgroundGradient.png')} style={styles.backgroundImage}>
+            <View style={styles.mainContainer}>
+            <Text style={styles.subtitle}>Loading</Text>
+            </View>
+          </ImageBackground>
       )
     case 'nft':
       return (
-        <View style={styles.mainContainer}>
-          <Menu navigation={navigation} />
-          <Text style={styles.subtitle}>Choose an Icon for {name}</Text>
-          <View style={styles.contentContainer}>
-            {
-              icons.map(icon => 
-                  <Pressable onLongPress={() => {setCurrentIcon(icon); mintHabitNFT(); setTimeout(() => {setState('loading')}, 900)}} key={icon} style={icon == currentIcon ? styles.iconBackgroundPressed : styles.iconBackground}>
-                    <Image source={{uri: icon}} style={styles.icon}></Image>
-                  </Pressable>
-              )
-            }
+        <ImageBackground source={require('../img/backgroundGradient.png')} style={styles.backgroundImage}>
+          <View style={styles.mainContainer}>
+            <Menu navigation={navigation} />
+            <Text style={styles.subtitle}>Choose an Icon for {name}</Text>
+            <View style={styles.contentContainer}>
+              {
+                icons.map(icon => 
+                    <Pressable onLongPress={() => {setCurrentIcon(icon); mintHabitNFT(); setTimeout(() => {setState('loading')}, 900)}} key={icon} style={icon == currentIcon ? styles.iconBackgroundPressed : styles.iconBackground}>
+                      <Image source={{uri: icon}} style={styles.icon}></Image>
+                    </Pressable>
+                )
+              }
+            </View>
+            <Text style={styles.subtitle}>Track your progress with tokens. Press and hold to mint your new habit.</Text>
           </View>
-          <Text style={styles.subtitle}>Track your progress with tokens. Press and hold to mint your new habit.</Text>
-        </View>
+        </ImageBackground>
       )
     case 'info':
       return (
@@ -150,7 +156,6 @@ export default function NewHabit({ navigation }: any) {
               <></>
             )
           }
-
         </View>
       </View>
     </ImageBackground>
@@ -175,8 +180,7 @@ export default function NewHabit({ navigation }: any) {
                     <Text style={styles.buttonText} onPress={() => { setNewOrQuit('quit'); setState('selected') }}>Quit an Old Habit</Text>
                   </Text>
                 </TouchableOpacity>
-              </View>
-              {
+                {
                 state == 'selected' ? (
                   <TouchableOpacity activeOpacity={0.5}
                     onPress={() => { setState('info') }} style={styles.button}>
@@ -188,6 +192,7 @@ export default function NewHabit({ navigation }: any) {
                   <></>
                 )
               }
+              </View>
             </View>
           </ImageBackground>
         </>
@@ -362,6 +367,7 @@ const styles = StyleSheet.create({
   },
   buttonRow: {
     width: '100%',
+    maxHeight: 50,
     flex: 1,
     flexDirection: 'row',
     columnGap: 10,
