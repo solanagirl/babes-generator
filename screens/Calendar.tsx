@@ -11,6 +11,7 @@ import { Habit } from '../components/Habit';
 import { Menu } from '../components/Menu'
 import { Colors } from '../components/Colors'
 import { findNFT } from '../src';
+import { Milestone } from '../components/Milestone';
 
 export default function Calendar({ navigation }: any) {
   const {connection} = useConnection();
@@ -24,8 +25,12 @@ export default function Calendar({ navigation }: any) {
       const fetchedBalance = await connection.getBalance(account.publicKey);
       console.log('Balance fetched: ' + fetchedBalance);
       setBalance(fetchedBalance);
+      const data = await findNFT(selectedAccount!.publicKey);
+      setNFTs(await data.results);
+      console.log('NFTs Fetched: ' + nfts);
+
     },
-    [connection, balance],
+    [balance],
   );
 
   useEffect(() => {
@@ -35,16 +40,7 @@ export default function Calendar({ navigation }: any) {
     fetchAndUpdateBalance(selectedAccount);
   }, [fetchAndUpdateBalance, selectedAccount]);
 
-  useEffect(() => {
-    if (!selectedAccount) {
-      return;
-    }
-    async function findOwnedNFT() {
-      const data = await findNFT(selectedAccount?.publicKey);
-      setNFTs(await data.results);
-    }
-    findOwnedNFT();
-  }, []);
+
 
   return (
     <View style={styles.container}>
@@ -59,7 +55,7 @@ export default function Calendar({ navigation }: any) {
         {
           nfts?.map((nft: any) => {
             return (
-              <Habit key={`${nft.name}_${nft.id}`} imageURI={nft.image} name={nft.name} attributes={nft.attributes} nft={nft}/>
+              <Milestone key={`${nft.name}_${nft.id}`} nft={nft}/>
             )
           })
         }

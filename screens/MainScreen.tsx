@@ -11,7 +11,7 @@ import DisconnectButton from '../components/DisconnectButton';
 import { Habit } from '../components/Habit';
 import { Menu } from '../components/Menu'
 import { Colors } from '../components/Colors'
-import { findNFT, underdog } from '../src';
+import { findNFT } from '../src';
 
 export default function MainScreen({ navigation }: any) {
   const {connection} = useConnection();
@@ -26,8 +26,12 @@ export default function MainScreen({ navigation }: any) {
       const fetchedBalance = await connection.getBalance(account.publicKey);
       console.log('Balance fetched: ' + fetchedBalance);
       setBalance(fetchedBalance);
+      setLoading(true)
+      const data = await findNFT(account.publicKey);
+      setNFTs(await data.results);
+      setLoading(false)
     },
-    [connection, balance],
+    [balance],
   );
 
   useEffect(() => {
@@ -37,19 +41,6 @@ export default function MainScreen({ navigation }: any) {
     fetchAndUpdateBalance(selectedAccount);
   }, [fetchAndUpdateBalance, selectedAccount]);
 
-  useEffect(() => {
-    if (!selectedAccount) {
-      return;
-    }
-    async function findOwnedNFT() {
-      setLoading(true)
-      const data = await findNFT(selectedAccount?.publicKey);
-      setNFTs(await data.results);
-      console.log(nfts)
-      setLoading(false)
-    }
-    findOwnedNFT();
-  }, [balance]);
 
   if (loading) {
     return (
@@ -82,17 +73,13 @@ export default function MainScreen({ navigation }: any) {
               <View style={styles.contentContainer}>
               <Text style={styles.baseText}>
                 <Text style={styles.title}>Your {nfts.length} Habits</Text>
-              </Text>
-                {
-                  nfts?.map((nft: any, index: number) => {
-                    return (
-                      <Habit nft={nft} key={`${nft.name}_${index}`} imageURI={nft.image} name={nft.name} attributes={nft.attributes}/>
-                    )
-                  })
-                }
-              <Text style={styles.baseText}>
-                <Text style={styles.title}>Hold icon to complete check-in.</Text>
-              </Text>
+                  {
+                    nfts?.map((nft: any, index: number) => {
+                      return (
+                        <Habit nft={nft} key={`${nft.name}_${index}`} imageURI={nft.image} name={nft.name} attributes={nft.attributes}/>
+                      )
+                    })
+                  }
               </View>
             ) : (
               <Text style={styles.baseText}>

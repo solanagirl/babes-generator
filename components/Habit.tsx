@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { Colors } from './Colors';
 import Burn from './Burn';
-import StabitButton from './StabitButton';
+import Stake from './Stake';
 
 type Props = Readonly<{
   imageURI: string,
@@ -20,17 +20,24 @@ type Props = Readonly<{
 }>;
 
 export function Habit({imageURI, attributes, name, nft}: Props) {
+  console.log(nft)
   return (
     <View style={styles.container}>
       <Pressable style={styles.iconBackground}>
-        <Image source={{uri: imageURI}} style={styles.icon}></Image>
+        {
+          nft.image ? (
+            <Image source={{uri: nft.image}} style={styles.icon}></Image>
+          ) : (
+            <></>
+          )
+        }
       </Pressable>
       <ScrollView>
         <Text style={styles.title}>{name}</Text>
         <Text style={styles.text}>{attributes.frequency} reminders</Text>
       </ScrollView>
       <View style={styles.options}>
-        <StabitButton onPress={() => {}}></StabitButton>
+        <Stake nft={nft}></Stake>
         <Burn nft={nft}></Burn>
       </View>
     </View>

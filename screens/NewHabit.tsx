@@ -11,6 +11,7 @@ import { Colors } from '../components/Colors'
 import { Menu } from '../components/Menu';
 import { Habit } from '../components/Habit';
 import { createNFT, findNFT } from '../src';
+import moment from 'moment';
 
 export default function NewHabit({ navigation }: any) {
   const { connection } = useConnection();
@@ -20,20 +21,23 @@ export default function NewHabit({ navigation }: any) {
   const [state, setState] = useState('');
   const [frequency, setFrequency] = useState('');
   const [currentIcon, setCurrentIcon] = useState('');
-  const [data, setData] = useState<any>();
-  // const address = selectedAccount!.publicKey;
+  const [milestone, setMilestone] = useState<number>();
+  const address = selectedAccount!.publicKey;
 
-  // async function mintHabitNFT(imageURI: string) {
-  //   const attributes = {
-  //     status: newOrQuit,
-  //     frequency: frequency
-  //   }
+  async function mintHabitNFT() {
+    const attributes = {
+      status: newOrQuit,
+      frequency: frequency,
+      streak: 0,
+      milestone: milestone,
+      lastCheckIn: moment.now().toString(),
+    }
 
-  //   const response = await createNFT(name, address, imageURI, attributes);
-  //   setData(response)
-  //   setState('success')  
-  // }
-
+    const response = await createNFT(name, address, currentIcon, attributes);
+    if (response) {
+      setState('success');
+    }
+  }
 
   const icons = [
     'https://cdn-icons-png.flaticon.com/512/2043/2043787.png',
@@ -56,30 +60,11 @@ export default function NewHabit({ navigation }: any) {
   //   findOwnedNFT();
   // }, [data]);
 
-  return (
-    <View style={styles.mainContainer}>
-          <Menu navigation={navigation} />
-          <Text style={styles.subtitle}>Choose an Icon for {name}</Text>
-          <View style={styles.contentContainer}>
-            {
-              icons.map(icon =>
-                <Pressable onLongPress={() => { setCurrentIcon(icon); mintHabitNFT(currentIcon); setTimeout(() => { setState('loading') }, 900) }} key={icon} style={icon == currentIcon ? styles.iconBackgroundPressed : styles.iconBackground}>
-                  <Image source={{ uri: icon }} style={styles.icon}></Image>
-                </Pressable>
-              )
-            }
-          </View>
-          <Text style={styles.subtitle}>Track your progress with tokens. Press and hold to mint your new habit.</Text>
-        </View>
-    
-  );
-
-
-
-
-
   switch (state) {
     case 'success':
+      setTimeout(() => {
+        navigation.navigate('Calendar')
+      }, 1500)
       return (
         <View style={styles.mainContainer}>
           <Menu navigation={navigation} />
@@ -108,10 +93,10 @@ export default function NewHabit({ navigation }: any) {
           <Text style={styles.subtitle}>Choose an Icon for {name}</Text>
           <View style={styles.contentContainer}>
             {
-              icons.map(icon =>
-                <Pressable onLongPress={() => { setCurrentIcon(icon); mintHabitNFT(currentIcon); setTimeout(() => { setState('loading') }, 900) }} key={icon} style={icon == currentIcon ? styles.iconBackgroundPressed : styles.iconBackground}>
-                  <Image source={{ uri: icon }} style={styles.icon}></Image>
-                </Pressable>
+              icons.map(icon => 
+                  <Pressable onLongPress={() => {setCurrentIcon(icon); mintHabitNFT(); setTimeout(() => {setState('loading')}, 900)}} key={icon} style={icon == currentIcon ? styles.iconBackgroundPressed : styles.iconBackground}>
+                    <Image source={{uri: icon}} style={styles.icon}></Image>
+                  </Pressable>
               )
             }
           </View>
@@ -166,6 +151,7 @@ export default function NewHabit({ navigation }: any) {
               <></>
             )
           }
+
         </View>
       </View>
     </ImageBackground>
