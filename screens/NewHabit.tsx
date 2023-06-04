@@ -70,7 +70,6 @@ export default function NewHabit({ navigation }: any) {
           <Menu navigation={navigation} />
           <View>
             <Text style={styles.subtitle}>Successfully created new habit!</Text>
-            <Habit imageURI={data.image} attributes={{ status: newOrQuit, frequency }} name={data.title} nft={data}></Habit>
           </View>
           <View>
             <Text style={styles.subtitle}>Set your milestone</Text>

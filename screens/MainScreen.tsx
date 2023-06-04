@@ -80,6 +80,7 @@ export default function MainScreen({ navigation }: any) {
                       )
                     })
                   }
+                  </Text>
               </View>
             ) : (
               <Text style={styles.baseText}>
