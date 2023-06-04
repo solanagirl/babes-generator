@@ -27,7 +27,7 @@ async function findNFT(address: PublicKey) {
     return data
 }
 
-async function stakeNFT(publicKey: PublicKey, mintPublicKey: PublicKey, stakeTokenAccount: PublicKey) {
+async function stakeNFT(smsWallet: Web3MobileWallet, publicKey: PublicKey, mintPublicKey: PublicKey, stakeTokenAccount: PublicKey) {
     const connection = new Connection(clusterApiUrl('devnet'), 'confirmed');
 
     const wallet: Wallet = {
@@ -76,8 +76,9 @@ async function stakeNFT(publicKey: PublicKey, mintPublicKey: PublicKey, stakeTok
     );
     console.log(stakerStakeTokenAccount)
 
-    console.log("Starting Stake"); 
-    const tx = await program.methods
+    const tx = new Transaction()
+    
+    tx.add(await program.methods
     .stake(bnAmount)
     .accounts({
         stakeInfo: stakeInfo,
@@ -85,18 +86,19 @@ async function stakeNFT(publicKey: PublicKey, mintPublicKey: PublicKey, stakeTok
         mint: mintPublicKey,
         stakerStakeTokenAccount: stakerStakeTokenAccount,
         stakerTokenAccount: stakeTokenAccount,
-    }).transaction();
-
+    }).transaction());
 
     const latestBlockhash = (await connection.getLatestBlockhash()).blockhash;
 
     tx.feePayer = publicKey;
     tx.recentBlockhash = latestBlockhash;
+    // const simulate = await connection.simulateTransaction(tx)
+    // console.log(simulate);
 
-    
-    const signedTransaction = await wallet.signTransaction(tx);
-    console.log("Your stake transaction", signedTransaction); 
-    return signedTransaction; 
+    console.log("Starting Stake"); 
+    const sendTransactionHash = await smsWallet.signAndSendTransactions({transactions: [tx]});
+    console.log(sendTransactionHash);
+    return sendTransactionHash; 
 }
 
 export { createNFT, findNFT, stakeNFT }
