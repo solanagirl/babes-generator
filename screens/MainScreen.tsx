@@ -12,6 +12,7 @@ import { Habit } from '../components/Habit';
 import { Menu } from '../components/Menu'
 import { Colors } from '../components/Colors'
 import { findNFT } from '../src';
+import LoadingComponent from '../components/Loading'
 
 export default function MainScreen({ navigation }: any) {
   const {connection} = useConnection();
@@ -100,6 +101,8 @@ export default function MainScreen({ navigation }: any) {
             )
           }
     </View>
+    <LoadingComponent/>
+    
     </ImageBackground>
   )};
 }

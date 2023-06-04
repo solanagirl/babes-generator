@@ -27,7 +27,7 @@ export function Header({date}: Props) {
         </Text>
         <TouchableOpacity activeOpacity={0.5}>
           <View style={styles.Button}>
-            <Image style={{height:30, width:30}} source={require('../img/cog-solid-24.png')}></Image>
+            <Image style={{height:30, width:30}} source={require('../img/cog-solid-24.png')} tintColor={Colors.font}></Image>
           </View>
         </TouchableOpacity>
       </View>
