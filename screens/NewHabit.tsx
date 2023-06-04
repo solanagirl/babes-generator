@@ -1,38 +1,38 @@
 
 
-import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {Animated, ScrollView, StyleSheet, Text, View, Pressable, TextInput, Image} from 'react-native';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { Animated, ScrollView, StyleSheet, Text, View, Pressable, TextInput, Image, ImageBackground, TouchableOpacity } from 'react-native';
 
 import {
   useAuthorization,
 } from '../components/providers/AuthorizationProvider';
-import {useConnection} from '../components/providers/ConnectionProvider';
+import { useConnection } from '../components/providers/ConnectionProvider';
 import { Colors } from '../components/Colors'
 import { Menu } from '../components/Menu';
 import { Habit } from '../components/Habit';
 import { createNFT, findNFT } from '../src';
 
-export default function NewHabit({navigation}: any) {
-  const {connection} = useConnection();
-  const {selectedAccount} = useAuthorization();
+export default function NewHabit({ navigation }: any) {
+  const { connection } = useConnection();
+  const { selectedAccount } = useAuthorization();
   const [newOrQuit, setNewOrQuit] = useState('');
   const [name, setName] = useState('');
   const [state, setState] = useState('');
   const [frequency, setFrequency] = useState('');
   const [currentIcon, setCurrentIcon] = useState('');
   const [data, setData] = useState<any>();
-  const address = selectedAccount!.publicKey;
+  // const address = selectedAccount!.publicKey;
 
-  async function mintHabitNFT(imageURI: string) {
-    const attributes = {
-      status: newOrQuit,
-      frequency: frequency
-    }
+  // async function mintHabitNFT(imageURI: string) {
+  //   const attributes = {
+  //     status: newOrQuit,
+  //     frequency: frequency
+  //   }
 
-    const response = await createNFT(name, address, imageURI, attributes);
-    setData(response)
-    setState('success')  
-  }
+  //   const response = await createNFT(name, address, imageURI, attributes);
+  //   setData(response)
+  //   setState('success')  
+  // }
 
 
   const icons = [
@@ -43,32 +43,54 @@ export default function NewHabit({navigation}: any) {
     'https://cdn-icons-png.flaticon.com/512/883/883378.png',
     'https://cdn-icons-png.flaticon.com/512/7081/7081325.png',
     'https://cdn-icons-png.flaticon.com/512/525/525853.png'
-      ]
+  ]
 
-  useEffect(() => {
-    if (!selectedAccount) {
-      return;
-    }
-    async function findOwnedNFT() {
-      const data = await findNFT(address);
-      console.log('nft', data)
-    }
-    findOwnedNFT();
-  }, [data]);
+  // useEffect(() => {
+  //   if (!selectedAccount) {
+  //     return;
+  //   }
+  //   async function findOwnedNFT() {
+  //     const data = await findNFT(address);
+  //     console.log('nft', data)
+  //   }
+  //   findOwnedNFT();
+  // }, [data]);
+
+  return (
+    <View style={styles.mainContainer}>
+          <Menu navigation={navigation} />
+          <Text style={styles.subtitle}>Choose an Icon for {name}</Text>
+          <View style={styles.contentContainer}>
+            {
+              icons.map(icon =>
+                <Pressable onLongPress={() => { setCurrentIcon(icon); mintHabitNFT(currentIcon); setTimeout(() => { setState('loading') }, 900) }} key={icon} style={icon == currentIcon ? styles.iconBackgroundPressed : styles.iconBackground}>
+                  <Image source={{ uri: icon }} style={styles.icon}></Image>
+                </Pressable>
+              )
+            }
+          </View>
+          <Text style={styles.subtitle}>Track your progress with tokens. Press and hold to mint your new habit.</Text>
+        </View>
+    
+  );
+
+
+
+
 
   switch (state) {
     case 'success':
       return (
         <View style={styles.mainContainer}>
-          <Menu navigation={navigation}/>
+          <Menu navigation={navigation} />
           <View>
             <Text style={styles.subtitle}>Successfully created new habit!</Text>
-            <Habit imageURI={data.image} attributes={{status: newOrQuit, frequency}} name={data.title} nft={data}></Habit>
+            <Habit imageURI={data.image} attributes={{ status: newOrQuit, frequency }} name={data.title} nft={data}></Habit>
           </View>
           <View>
             <Text style={styles.subtitle}>Set your milestone</Text>
             <ScrollView>
-              
+
             </ScrollView>
           </View>
         </View>
@@ -79,122 +101,150 @@ export default function NewHabit({navigation}: any) {
           <Text style={styles.subtitle}>Loading</Text>
         </View>
       )
-    case 'nft': 
+    case 'nft':
       return (
         <View style={styles.mainContainer}>
-          <Menu navigation={navigation}/>
-            <Text style={styles.subtitle}>Choose an Icon for {name}</Text>
-            <View style={styles.contentContainer}>
+          <Menu navigation={navigation} />
+          <Text style={styles.subtitle}>Choose an Icon for {name}</Text>
+          <View style={styles.contentContainer}>
             {
-              icons.map(icon => 
-                  <Pressable onLongPress={() => {setCurrentIcon(icon); mintHabitNFT(currentIcon); setTimeout(() => {setState('loading')}, 900)}} key={icon} style={icon == currentIcon ? styles.iconBackgroundPressed : styles.iconBackground}>
-                    <Image source={{uri: icon}} style={styles.icon}></Image>
-                  </Pressable>
+              icons.map(icon =>
+                <Pressable onLongPress={() => { setCurrentIcon(icon); mintHabitNFT(currentIcon); setTimeout(() => { setState('loading') }, 900) }} key={icon} style={icon == currentIcon ? styles.iconBackgroundPressed : styles.iconBackground}>
+                  <Image source={{ uri: icon }} style={styles.icon}></Image>
+                </Pressable>
               )
             }
-            </View>
+          </View>
           <Text style={styles.subtitle}>Track your progress with tokens. Press and hold to mint your new habit.</Text>
         </View>
       )
     case 'info':
       return (
-        <View style={styles.mainContainer}>
-          <Menu navigation={navigation}/>
-          <View style={styles.topContainer}>
-            <Text style={styles.subtitle}>Track your new beginnings.</Text>
-            <TextInput onChangeText={(text) => {setName(text); StyleSheet.compose(styles.button, styles.buttonPressed)}} placeholder='Name your habit' value={name} style={styles.input}></TextInput>
-            <Text>How often shall we check in?</Text>
-            <View style={styles.buttonRow}>
-              <Pressable onPress={() => {setFrequency('daily')}} style={frequency == 'daily' ? styles.buttonPressed : styles.button}>
-                <Text>Daily</Text>
-              </Pressable>
-              
-              <Pressable onPress={() => {setFrequency('weekly')}} style={frequency == 'weekly' ? styles.buttonPressed : styles.button}>
-                <Text>Weekly</Text>
-              </Pressable>
-              
-              <Pressable onPress={() => {setFrequency('monthly')}} style={frequency == 'monthly' ? styles.buttonPressed : styles.button}>
-                <Text>Monthly</Text>
-              </Pressable>
-            </View>
+        <ImageBackground source={require('../img/backgroundGradient.png')} style={styles.backgroundImage}>
+      <Menu navigation={navigation} />
+      <View style={styles.mainContainer}>
+        <View style={styles.topContainer}>
+          <Text style={styles.textBase}>
+            <Text style={styles.subtitle}>Track your new Beginnings.</Text>
+          </Text>
+          <TextInput onChangeText={(text) => { setName(text); }} placeholderTextColor="#eee"placeholder='Name your habit...' value={name} style={styles.input}></TextInput>
+          <Text style={styles.textBase}>
+            <Text style={styles.text}>How often shall we check in?</Text>
+          </Text>
+
+          <View style={styles.buttonRow}>
+            <TouchableOpacity activeOpacity={0.5} onPress={() => { setFrequency('daily') }} style={frequency == 'daily' ? styles.buttonPressed : styles.button}>
+              <Text style={styles.textBase}>
+                <Text style={styles.buttonText}>Daily</Text>
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity activeOpacity={0.5} onPress={() => { setFrequency('weekly') }} style={frequency == 'weekly' ? styles.buttonPressed : styles.button}>
+              <Text style={styles.textBase}>
+                <Text style={styles.buttonText}>Monthly</Text>
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity activeOpacity={0.5} onPress={() => { setFrequency('monthly') }} style={frequency == 'monthly' ? styles.buttonPressed : styles.button}>
+              <Text style={styles.textBase}>
+                <Text style={styles.buttonText}>Yearly</Text>
+              </Text>
+            </TouchableOpacity>
           </View>
           {
-              frequency !== '' ? (
-                <Pressable
-                onPress={() => {setState('nft')}} style={styles.nextButton}>
-                  <View style={frequency !== '' && name !== '' ? styles.glow : styles.disabled}></View>
-                    <Text style={styles.text}>Next</Text>
-                </Pressable>
-          
-              ) : (
-                <></>
-              )
-            }
+            frequency !== '' ? (
+              <TouchableOpacity activeOpacity={0.5} // Button not showing
+                style={styles.nextButton}
+                onPress={() => { setState('nft') }}>
+                <View style={frequency !== '' ? styles.glow : styles.disabled}>
+                  <Text style={styles.textBase}>
+                    <Text style={styles.buttonText}>Next</Text>
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            ) : (
+              <></>
+            )
+          }
         </View>
+      </View>
+    </ImageBackground>
       )
     default:
       return (
         <>
-          <Menu navigation={navigation}/>
-          <View style={styles.mainContainer}>
-            <View style={styles.topContainer}>
-              <Text style={styles.subtitle}>What is your goal?</Text>
-              <Pressable style={newOrQuit == 'new' ? styles.buttonPressed : styles.button} onPress={() => {setNewOrQuit('new'); setState('selected')}}>
-                <Text style={styles.buttonText}>Start something new</Text>
-              </Pressable>
-              <Pressable style={newOrQuit == 'quit' ? styles.buttonPressed : styles.button}>
-                <Text style={styles.buttonText} onPress={() => {setNewOrQuit('quit'); setState('selected')}}>Quit an Old Habit</Text>
-              </Pressable>
+          <ImageBackground source={require('../img/backgroundGradient.png')} style={styles.backgroundImage}>
+            <Menu navigation={navigation} />
+            <View style={styles.mainContainer}>
+              <View style={styles.topContainer}>
+                <Text style={styles.textBase}>
+                  <Text style={styles.subtitle}>What is your goal?</Text>
+                </Text>
+                <TouchableOpacity activeOpacity={0.5} style={newOrQuit == 'new' ? styles.buttonPressed : styles.button} onPress={() => { setNewOrQuit('new'); setState('selected') }}>
+                  <Text style={styles.textBase}>
+                    <Text style={styles.buttonText}>Start a New Habit</Text>
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity activeOpacity={0.5} style={newOrQuit == 'quit' ? styles.buttonPressed : styles.button}>
+                  <Text style={styles.textBase}>
+                    <Text style={styles.buttonText} onPress={() => { setNewOrQuit('quit'); setState('selected') }}>Quit an Old Habit</Text>
+                  </Text>
+                </TouchableOpacity>
+              </View>
+              {
+                state == 'selected' ? (
+                  <TouchableOpacity activeOpacity={0.5}
+                    onPress={() => { setState('info') }} style={styles.button}>
+                    <Text style={styles.textBase}>
+                      <Text style={styles.buttonText}>Next</Text>
+                    </Text>
+                  </TouchableOpacity>
+                ) : (
+                  <></>
+                )
+              }
             </View>
-            {
-              state == 'selected' ? (
-                <Pressable
-                onPress={() => {setState('info')}} style={styles.button}>
-                    <Text style={styles.text}>Next</Text>
-                </Pressable>
-          
-              ) : (
-                <></>
-              )
-            }
-          </View>
+          </ImageBackground>
         </>
-      );    
+      );
   }
 }
 
 const styles = StyleSheet.create({
   mainContainer: {
     backgroundColor: Colors.background,
-    paddingHorizontal: 48,
-    paddingBottom: 256,
-    paddingTop: 64,
+    width: '100%',
+    padding: 30,
+    paddingBottom: 260,
+    paddingTop: 60,
     flex: 1,
-    rowGap: 24,
+    rowGap: 20,
     minHeight: 800,
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   itemContainer: {
     height: 300,
-    gap: 12
+    gap: 10,
   },
   contentContainer: {
     gap: 8,
-    marginTop: 12,
-    paddingVertical: 12,
+    marginTop: 10,
+    paddingVertical: 10,
     flex: 1,
     flexDirection: 'row',
     flexWrap: 'wrap',
-    minHeight: 256,
-    maxHeight: 420
+    minHeight: 260,
+    maxHeight: 420,
   },
   topContainer: {
-    height: '70%',
-    gap: 36
+    height: '200%',
+    gap: 40,
+    padding: 30,
+    alignItems: 'center',
   },
   icon: {
-    width: 64,
-    height: 64,
+    width: 60,
+    height: 60,
     zIndex: 1
   },
   iconBackground: {
@@ -202,55 +252,64 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    maxWidth: 92,
-    maxHeight: 92,
-    minWidth: 81,
-    minHeight: 81,
-    borderRadius: 48,
-    padding: 12
+    maxWidth: 90,
+    maxHeight: 90,
+    minWidth: 80,
+    minHeight: 80,
+    borderRadius: 50,
+    padding: 10,
   },
   iconBackgroundPressed: {
-    padding: 12,
+    padding: 10,
     backgroundColor: Colors.pink,
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 48,
-    minWidth: 81,
-    minHeight: 81,
-    maxHeight: 92,
-    maxWidth: 92,    
+    borderRadius: 50,
+    minWidth: 80,
+    minHeight: 80,
+    maxHeight: 90,
+    maxWidth: 90,
   },
   subtitle: {
-    fontSize: 24,
-    color: Colors.font
+    fontSize: 30,
+    color: Colors.font,
+    fontWeight: 'bold',
   },
   button: {
     backgroundColor: Colors.component,
-    paddingVertical: 12,
-    borderRadius: 12,
-    maxHeight: 81,
+    paddingVertical: 10,
+    borderRadius: 30,
+    maxHeight: 80,
     flex: 1,
     flexDirection: 'column',
     alignItems: 'center',
-    justifyContent: 'center'
-
+    justifyContent: 'center',
+    width: '80%',
+    height: 80,
   },
   buttonPressed: {
-    backgroundColor: Colors.pink,
-    paddingVertical: 12,
-    borderRadius: 12,
+    backgroundColor: Colors.blueTransparent,
+    paddingVertical: 10,
+    borderRadius: 30,
     flex: 1,
-    maxHeight: 81,
+    maxHeight: 80,
     flexDirection: 'column',
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    width: '80%',
+    height: 80,
   },
   buttonText: {
     textAlign: 'center',
-    fontSize: 18,
-    color: Colors.font
-  }, 
+    fontSize: 20,
+    color: Colors.font,
+    fontWeight: 'bold',
+  },
+  textBase: {
+    fontFamily: 'Nunito',
+    textAlign: 'center',
+  },
   nextButton: {
     flex: 1,
     flexDirection: 'column',
@@ -258,14 +317,16 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   input: {
-    height: 56,
-    borderColor: '#453A49',
-    backgroundColor: '#282F44',
-    borderWidth: 2,
-    borderRadius: 12,
-    marginBottom: 16,
-    paddingHorizontal: 18,
-    fontSize: 18,
+    height: 60,
+    borderColor: Colors.backgroundMain,
+    backgroundColor: Colors.component,
+    color: Colors.font,
+    borderWidth: 3,
+    borderRadius: 15,
+    marginBottom: 30,
+    paddingHorizontal: 20,
+    width: '90%',
+    fontSize: 20,
   },
   inputLong: {
     height: 128,
@@ -291,7 +352,8 @@ const styles = StyleSheet.create({
     height: '100%',
     textAlignVertical: 'center',
     fontSize: 20,
-    color: '#C1B2C7'
+    fontWeight: 'bold',
+    color: Colors.font
   },
   glow: {
     borderColor: '#BA2C73',
@@ -299,7 +361,7 @@ const styles = StyleSheet.create({
     width: '80%',
     height: '50%',
     position: 'absolute',
-    shadowOffset: {width: -1, height: 1},
+    shadowOffset: { width: -1, height: 1 },
     flexGrow: 1,
     borderRadius: 24,
     zIndex: 1,
@@ -309,14 +371,21 @@ const styles = StyleSheet.create({
     width: '80%',
     height: '80%',
     position: 'absolute',
-    shadowOffset: {width: -1, height: 1},
+    shadowOffset: { width: -1, height: 1 },
     flexGrow: 1,
-    borderRadius: 24,
+    borderRadius: 30,
   },
   buttonRow: {
     width: '100%',
     flex: 1,
     flexDirection: 'row',
-    columnGap: 8
+    columnGap: 10,
+  },
+  backgroundImage: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
   }
 });

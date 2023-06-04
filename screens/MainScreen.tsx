@@ -102,9 +102,11 @@ export default function MainScreen({ navigation }: any) {
           }
           {
             selectedAccount ? (
-              <Menu navigation={navigation}/>
-            ): (
               <></>
+              // <Menu navigation={navigation}/>
+            ): (
+              // <></>
+              <Menu navigation={navigation}/>
             )
           }
     </View>

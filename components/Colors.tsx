@@ -6,6 +6,7 @@ export const Colors = {
   pink: '#FF009D',
   purple: '#5D4099',
   blue: '#4dd9ff',
+  blueTransparent: '#4dd9ffB0',
   mint: '#44c98d',
   black: '#000',
   transparent: '#ffffff00'
