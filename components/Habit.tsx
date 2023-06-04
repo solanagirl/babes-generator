@@ -20,10 +20,17 @@ type Props = Readonly<{
 }>;
 
 export function Habit({imageURI, attributes, name, nft}: Props) {
+  console.log(nft)
   return (
     <View style={styles.container}>
       <Pressable style={styles.iconBackground}>
-        <Image source={{uri: imageURI}} style={styles.icon}></Image>
+        {
+          nft.image ? (
+            <Image source={{uri: nft.image}} style={styles.icon}></Image>
+          ) : (
+            <></>
+          )
+        }
       </Pressable>
       <ScrollView>
         <Text style={styles.title}>{name}</Text>

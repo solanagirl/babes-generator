@@ -25,8 +25,12 @@ export default function MainScreen({ navigation }: any) {
       const fetchedBalance = await connection.getBalance(account.publicKey);
       console.log('Balance fetched: ' + fetchedBalance);
       setBalance(fetchedBalance);
+      setLoading(true)
+      const data = await findNFT(account.publicKey);
+      setNFTs(await data.results);
+      setLoading(false)
     },
-    [connection, balance],
+    [balance],
   );
 
   useEffect(() => {
@@ -36,18 +40,6 @@ export default function MainScreen({ navigation }: any) {
     fetchAndUpdateBalance(selectedAccount);
   }, [fetchAndUpdateBalance, selectedAccount]);
 
-  useEffect(() => {
-    if (!selectedAccount) {
-      return;
-    }
-    async function findOwnedNFT() {
-      setLoading(true)
-      const data = await findNFT(selectedAccount!.publicKey);
-      setNFTs(await data.results);
-      setLoading(false)
-    }
-    findOwnedNFT();
-  }, [selectedAccount, balance]);
 
   if (loading) {
     return (
@@ -79,8 +71,7 @@ export default function MainScreen({ navigation }: any) {
                       )
                     })
                   }
-                  <Text style={styles.title}>Press and hold icon to complete check in.</Text>
-                </View>
+              </View>
             ) : (
               <Text style={styles.title}>Connect your Solana wallet to view your habits</Text>
             )

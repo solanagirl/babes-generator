@@ -11,6 +11,7 @@ import { Colors } from '../components/Colors'
 import { Menu } from '../components/Menu';
 import { Habit } from '../components/Habit';
 import { createNFT, findNFT } from '../src';
+import moment from 'moment';
 
 export default function NewHabit({navigation}: any) {
   const {connection} = useConnection();
@@ -20,20 +21,23 @@ export default function NewHabit({navigation}: any) {
   const [state, setState] = useState('');
   const [frequency, setFrequency] = useState('');
   const [currentIcon, setCurrentIcon] = useState('');
-  const [data, setData] = useState<any>();
+  const [milestone, setMilestone] = useState<number>();
   const address = selectedAccount!.publicKey;
 
-  async function mintHabitNFT(imageURI: string) {
+  async function mintHabitNFT() {
     const attributes = {
       status: newOrQuit,
-      frequency: frequency
+      frequency: frequency,
+      streak: 0,
+      milestone: milestone,
+      lastCheckIn: moment.now().toString(),
     }
 
-    const response = await createNFT(name, address, imageURI, attributes);
-    setData(response)
-    setState('success')  
+    const response = await createNFT(name, address, currentIcon, attributes);
+    if (response) {
+      setState('success');
+    }
   }
-
 
   const icons = [
     'https://cdn-icons-png.flaticon.com/512/2043/2043787.png',
@@ -45,30 +49,16 @@ export default function NewHabit({navigation}: any) {
     'https://cdn-icons-png.flaticon.com/512/525/525853.png'
       ]
 
-  useEffect(() => {
-    if (!selectedAccount) {
-      return;
-    }
-    async function findOwnedNFT() {
-      const data = await findNFT(address);
-    }
-    findOwnedNFT();
-  }, [data]);
-
   switch (state) {
     case 'success':
+      setTimeout(() => {
+        navigation.navigate('Calendar')
+      }, 1500)
       return (
         <View style={styles.mainContainer}>
           <Menu navigation={navigation}/>
           <View>
             <Text style={styles.subtitle}>Successfully created new habit!</Text>
-            <Habit imageURI={data.image} attributes={{status: newOrQuit, frequency}} name={data.title} nft={data}></Habit>
-          </View>
-          <View>
-            <Text style={styles.subtitle}>Set your milestone</Text>
-            <ScrollView>
-              
-            </ScrollView>
           </View>
         </View>
       )
@@ -86,7 +76,7 @@ export default function NewHabit({navigation}: any) {
             <View style={styles.contentContainer}>
             {
               icons.map(icon => 
-                  <Pressable onLongPress={() => {setCurrentIcon(icon); mintHabitNFT(currentIcon); setTimeout(() => {setState('loading')}, 900)}} key={icon} style={icon == currentIcon ? styles.iconBackgroundPressed : styles.iconBackground}>
+                  <Pressable onLongPress={() => {setCurrentIcon(icon); mintHabitNFT(); setTimeout(() => {setState('loading')}, 900)}} key={icon} style={icon == currentIcon ? styles.iconBackgroundPressed : styles.iconBackground}>
                     <Image source={{uri: icon}} style={styles.icon}></Image>
                   </Pressable>
               )
@@ -116,9 +106,22 @@ export default function NewHabit({navigation}: any) {
                 <Text>Monthly</Text>
               </Pressable>
             </View>
+            <View style={styles.buttonRow}>
+              <Pressable onPress={() => {setMilestone(7)}} style={milestone == 7 ? styles.buttonPressed : styles.button}>
+                <Text>7 days</Text>
+              </Pressable>
+              
+              <Pressable onPress={() => {setMilestone(30)}} style={milestone == 30 ? styles.buttonPressed : styles.button}>
+                <Text>30 days</Text>
+              </Pressable>
+              
+              <Pressable onPress={() => {setMilestone(90)}} style={milestone == 90 ? styles.buttonPressed : styles.button}>
+                <Text>90 days</Text>
+              </Pressable>
+            </View>
           </View>
           {
-              frequency !== '' ? (
+              frequency !== '' && milestone ? (
                 <Pressable
                 onPress={() => {setState('nft')}} style={styles.nextButton}>
                   <View style={frequency !== '' && name !== '' ? styles.glow : styles.disabled}></View>

@@ -1,6 +1,6 @@
 import {transact} from '@solana-mobile/mobile-wallet-adapter-protocol-web3js';
 import React, {ComponentProps, useState, useCallback} from 'react';
-import {Button, Pressable, StyleSheet, View, Image} from 'react-native';
+import {Text, Pressable, StyleSheet, View, Image} from 'react-native';
 
 import {useAuthorization} from './providers/AuthorizationProvider';
 import {Colors} from './Colors';
@@ -18,7 +18,7 @@ export const APP_IDENTITY = {
 export default function Burn({nft}: Props) {
   const {authorizeSession, selectedAccount} = useAuthorization();
   const [burnInProgress, setBurnInProgress] = useState(false);
-  
+  const [burnt, setBurnt] = useState(false);
   const handleBurnPress = useCallback(async () => {
     const token = getAssociatedTokenAddressSync(new PublicKey(nft.mintAddress), new PublicKey(nft.ownerAddress));
 
@@ -27,7 +27,7 @@ export default function Burn({nft}: Props) {
     const signature = await transact(async (wallet) => {  
         const connection = new Connection(clusterApiUrl('devnet'), 'confirmed');
         if (wallet) {
-            const latestBlockhash = connection.getLatestBlockhash();
+            const latestBlockhash = await connection.getLatestBlockhash();
 
             const authorizationResult = await authorizeSession(wallet);
 
@@ -45,25 +45,32 @@ export default function Burn({nft}: Props) {
 
             tx.instructions.push(instruction);
             tx.feePayer = payer;
-            tx.recentBlockhash = (await latestBlockhash).blockhash;
+            tx.recentBlockhash = latestBlockhash.blockhash;
 
-    
-            return await wallet.signAndSendTransactions({
-                transactions: [tx],
+            const hash =  await wallet.signAndSendTransactions({
+              transactions: [tx],
             });
-        } else {
+            return hash;
+            } else {
             setBurnInProgress(false);
         }
     });
     if (signature) {
         setBurnInProgress(false);
+        setBurnt(true);
     }
   }, [authorizeSession]);
   return (
     <Pressable
       disabled={burnInProgress}
       onPress={() => handleBurnPress()}>
-        <Image source={require('../img/bin.png')} style={styles.icon}></Image>
+        {
+          burnt ? (
+            <Text>Burnt</Text>
+          ):(
+            <Image source={require('../img/bin.png')} style={styles.icon}></Image>
+          )
+        }
       </Pressable>
   );
 }
