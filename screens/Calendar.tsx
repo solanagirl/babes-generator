@@ -60,8 +60,8 @@ export default function Calendar({ navigation }: any) {
             )
           })
         }
-        <Menu navigation={navigation}/>
     </View>
+    <Menu navigation={navigation}/>
     </ImageBackground>
   );
 }
