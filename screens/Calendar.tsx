@@ -68,12 +68,13 @@ export default function Calendar({ navigation }: any) {
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 48,
-    paddingVertical: 12,
+    paddingHorizontal: 30,
+    paddingVertical: 20,
     backgroundColor: Colors.background,
     flex: 1,
     rowGap: 24,
-    height: '100%'
+    height: '100%',
+    width: "100%"
   },
   mainContainer: {
     backgroundColor: Colors.component,
