@@ -45,14 +45,13 @@ export default function MainScreen({ navigation }: any) {
 
   if (loading) {
     return (
-      <View>
-            <ImageBackground source={require('../img/backgroundGradient.png')} style={styles.backgroundImage} />
-            <View style={styles.contentContainer}>
+      <ImageBackground source={require('../img/backgroundGradient.png')} style={styles.backgroundImage}>
+      <View style={styles.contentContainer}>
         <Text style={styles.baseText}>
           <Text style={styles.title}>Loading...</Text>
         </Text>
       </View>
-      </View>
+      </ImageBackground>
     )
   } else {
     return (
@@ -77,13 +76,15 @@ export default function MainScreen({ navigation }: any) {
               <View style={styles.contentContainer}>
               <Text style={styles.baseText}>
                 <Text style={styles.title}>Your {nfts.length} Habits</Text>
+                  <View style={styles.contentContainer}>
                   {
-                    nfts?.map((nft: any, index: number) => {
-                      return (
-                        <Habit nft={nft} key={`${nft.name}_${index}`} imageURI={nft.image} name={nft.name} attributes={nft.attributes}/>
-                      )
-                    })
-                  }
+                      nfts?.map((nft: any, index: number) => {
+                        return (
+                          <Habit nft={nft} key={`${nft.name}_${index}`} imageURI={nft.image} name={nft.name} attributes={nft.attributes}/>
+                        )
+                      })
+                    }
+                  </View>
                   </Text>
               </View>
             ) : (
@@ -131,7 +132,9 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   contentContainer: {
-    gap: 10,
+    flex: 1,
+    rowGap: 20,
+    gap: 20,
   },
   baseText: {
     fontFamily: 'Nunito',

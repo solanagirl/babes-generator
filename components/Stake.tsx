@@ -27,12 +27,12 @@ export default function Stake({nft}: Props) {
 
     const signature = await transact(async (wallet) => {  
         if (wallet) {
-          const authorizationResult = await authorizeSession(wallet);
-          return await stakeNFT(authorizationResult.publicKey, nft.mintAddress, token)    
-        } else {
+            const authorizationResult = await authorizeSession(wallet);
+            const stake = await stakeNFT(wallet, authorizationResult.publicKey, nft.mintAddress, token)
             setStakeInProgress(false);
-            return;
+            return stake
         }
+        setStakeInProgress(false);
     })
     if (signature) {
         setStakeInProgress(false);

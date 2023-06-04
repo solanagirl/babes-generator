@@ -28,6 +28,10 @@ export function Milestone({nft}: Props) {
             <Pressable style={styles.button}>
                 <Text>{nft.attributes.checkedIn ? 'Check In Completed' : 'Check In'}</Text>
             </Pressable>
+            <Pressable style={styles.button}>
+                <Stake nft={nft} />
+            </Pressable>
+
         </View>
     </View>
   );

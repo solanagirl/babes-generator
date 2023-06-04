@@ -40,13 +40,7 @@ export default function NewHabit({ navigation }: any) {
   }
 
   const icons = [
-    'https://cdn-icons-png.flaticon.com/512/2043/2043787.png',
-    'https://cdn-icons-png.flaticon.com/512/5223/5223155.png',
-    'https://cdn-icons-png.flaticon.com/512/2829/2829162.png',
-    'https://cdn-icons-png.flaticon.com/512/2553/2553628.png',
-    'https://cdn-icons-png.flaticon.com/512/883/883378.png',
-    'https://cdn-icons-png.flaticon.com/512/7081/7081325.png',
-    'https://cdn-icons-png.flaticon.com/512/525/525853.png'
+    'https://bafkreiglw4rpka4idig6o2sa5gt2pa7owgkf5nwvsu2c3mms4nfiubb7i4.ipfs.nftstorage.link/'
   ]
 
   // useEffect(() => {
@@ -67,8 +61,8 @@ console.log(state)
       }, 1500)
       return (
         <ImageBackground source={require('../img/backgroundGradient.png')} style={styles.backgroundImage}>
+          <Menu navigation={navigation} />
           <View style={styles.mainContainer}>
-            <Menu navigation={navigation} />
             <View>
               <Text style={styles.subtitle}>Successfully created new habit!</Text>
             </View>
@@ -94,18 +88,18 @@ console.log(state)
         <ImageBackground source={require('../img/backgroundGradient.png')} style={styles.backgroundImage}>
           <View style={styles.mainContainer}>
             <Menu navigation={navigation} />
-            <Text style={styles.subtitle}>Choose an Icon for {name}</Text>
             <View style={styles.contentContainer}>
-              {
-                icons.map(icon => 
-                    <Pressable onLongPress={() => {setCurrentIcon(icon); mintHabitNFT(); setTimeout(() => {setState('loading')}, 900)}} key={icon} style={icon == currentIcon ? styles.iconBackgroundPressed : styles.iconBackground}>
-                      <Image source={{uri: icon}} style={styles.icon}></Image>
-                    </Pressable>
-                )
-              }
-            </View>
+              <TouchableOpacity activeOpacity={0.5} // Button not showing
+                  style={styles.button}
+                  onPress={() => { mintHabitNFT(); setState('loading') }}>
+                    <Text style={styles.textBase}>
+                      <Text style={styles.buttonText}>Next</Text>
+                    </Text>
+                </TouchableOpacity>
+              </View>
             <Text style={styles.subtitle}>Track your progress with tokens. Press and hold to mint your new habit.</Text>
           </View>
+          <Text style={styles.subtitle}>Choose an Icon for {name}</Text>
         </ImageBackground>
       )
     case 'info':
@@ -131,26 +125,24 @@ console.log(state)
 
             <TouchableOpacity activeOpacity={0.5} onPress={() => { setFrequency('weekly') }} style={frequency == 'weekly' ? styles.buttonPressed : styles.button}>
               <Text style={styles.textBase}>
-                <Text style={styles.buttonText}>Monthly</Text>
+                <Text style={styles.buttonText}>Weekly</Text>
               </Text>
             </TouchableOpacity>
 
             <TouchableOpacity activeOpacity={0.5} onPress={() => { setFrequency('monthly') }} style={frequency == 'monthly' ? styles.buttonPressed : styles.button}>
               <Text style={styles.textBase}>
-                <Text style={styles.buttonText}>Yearly</Text>
+                <Text style={styles.buttonText}>Monthly</Text>
               </Text>
             </TouchableOpacity>
           </View>
           {
             frequency !== '' ? (
               <TouchableOpacity activeOpacity={0.5} // Button not showing
-                style={styles.nextButton}
+                style={styles.button}
                 onPress={() => { setState('nft') }}>
-                <View style={frequency !== '' ? styles.glow : styles.disabled}>
                   <Text style={styles.textBase}>
                     <Text style={styles.buttonText}>Next</Text>
                   </Text>
-                </View>
               </TouchableOpacity>
             ) : (
               <></>
