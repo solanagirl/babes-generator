@@ -7,17 +7,19 @@ import {
 } from '../components/providers/AuthorizationProvider';
 import {useConnection} from '../components/providers/ConnectionProvider';
 import ConnectButton from '../components/ConnectButton';
-import { Habit } from '../components/Habit';
 import { Menu } from '../components/Menu'
 import { Colors } from '../components/Colors'
-import { findNFT } from '../src';
+import { findNFT, getStakedNFTs } from '../src';
 import { Milestone } from '../components/Milestone';
+import { StakedHabit } from '../components/StakedHabit';
+import { UnstakedHabit } from '../components/UnstakedHabit';
 
-export default function Calendar({ navigation }: any) {
+export default function MainScreen({ navigation }: any) {
   const {connection} = useConnection();
   const {selectedAccount} = useAuthorization();
   const [balance, setBalance] = useState<number | null>(null);
-  const [nfts, setNFTs] = useState<any>([]);
+  const [unstakedNFTs, setUnstakedNFTs] = useState<any>([]);
+  const [stakedNFTs, setStakedNFTs] = useState([]);
 
   const fetchAndUpdateBalance = useCallback(
     async (account: Account) => {
@@ -25,12 +27,14 @@ export default function Calendar({ navigation }: any) {
       const fetchedBalance = await connection.getBalance(account.publicKey);
       console.log('Balance fetched: ' + fetchedBalance);
       setBalance(fetchedBalance);
-      const data = await findNFT(selectedAccount!.publicKey);
-      setNFTs(await data.results);
-      console.log('NFTs Fetched: ' + nfts);
+      const data = await findNFT(account.publicKey);
+      setUnstakedNFTs(await data.results);
 
+      const stakedNFTs = await getStakedNFTs(account.publicKey);
+      console.log(stakedNFTs)
+      setStakedNFTs(stakedNFTs);
     },
-    [balance],
+    [connection, balance],
   );
 
   useEffect(() => {
@@ -54,11 +58,27 @@ export default function Calendar({ navigation }: any) {
         <Text>Set Milestone</Text>
         <Text style={styles.title}>Your Milestones</Text>
         {
-          nfts?.map((nft: any) => {
+          unstakedNFTs?.map((nft: any) => {
             return (
-              <Milestone key={`${nft.name}_${nft.id}`} nft={nft}/>
+              <UnstakedHabit key={`${nft.name}_${nft.id}`} nft={nft}/>
             )
           })
+        }
+        {
+          stakedNFTs ? (
+            <>
+              <Text style={styles.title}>Your Staked Habits</Text>
+              {
+                stakedNFTs?.map((nft: any) => {
+                  return (
+                    <StakedHabit key={`${nft.name}_${nft.id}`} nft={nft}/>
+                  )
+                })
+              }
+            </>
+          ) : (
+            <></>
+          )
         }
     </View>
     <Menu navigation={navigation}/>

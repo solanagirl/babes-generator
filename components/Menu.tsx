@@ -3,9 +3,6 @@ import React, {ComponentProps, useState, useCallback} from 'react';
 import {Button, Image, ImageSourcePropType, Pressable, StyleSheet, TouchableOpacity, View} from 'react-native';
 import { Colors } from "./Colors"
 
-import {useAuthorization} from './providers/AuthorizationProvider';
-import {useConnection} from './providers/ConnectionProvider';
-
 type Props = {
     navigation: any
 }

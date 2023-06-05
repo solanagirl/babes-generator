@@ -9,7 +9,7 @@ import {
 import { useConnection } from '../components/providers/ConnectionProvider';
 import { Colors } from '../components/Colors'
 import { Menu } from '../components/Menu';
-import { Habit } from '../components/Habit';
+import { UnstakedHabit } from '../components/UnstakedHabit';
 import { createNFT, findNFT } from '../src';
 import moment from 'moment';
 
@@ -30,7 +30,7 @@ export default function NewHabit({ navigation }: any) {
       frequency: frequency,
       streak: 0,
       milestone: milestone,
-      lastCheckIn: moment.now().toString(),
+      lastCheckIn: moment.now(),
     }
 
     const response = await createNFT(name, address, currentIcon, attributes);
@@ -53,7 +53,6 @@ export default function NewHabit({ navigation }: any) {
   //   }
   //   findOwnedNFT();
   // }, [data]);
-console.log(state)
   switch (state) {
     case 'success':
       setTimeout(() => {

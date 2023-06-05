@@ -63,7 +63,8 @@ export default function Burn({nft}: Props) {
   return (
     <Pressable
       disabled={burnInProgress}
-      onPress={() => handleBurnPress()}>
+      onPress={() => handleBurnPress()}
+      style={burnInProgress ? styles.buttonBurning : styles.button}>
         {
           burnt ? (
             <Text>Burnt</Text>
@@ -77,8 +78,20 @@ export default function Burn({nft}: Props) {
 
 export const styles = StyleSheet.create(({
   icon: {
-    width: 36,
-    height: 36,
+    width: 24,
+    height: 24,
     tintColor: '#ffffff'
+  },
+  button: {
+    backgroundColor: Colors.blue,
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 24
+  },
+  buttonBurning: {
+    backgroundColor: Colors.pink,
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 24
   },
 }))

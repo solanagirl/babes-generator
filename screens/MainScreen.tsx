@@ -8,10 +8,11 @@ import {
 import {useConnection} from '../components/providers/ConnectionProvider';
 import ConnectButton from '../components/ConnectButton';
 import DisconnectButton from '../components/DisconnectButton';
-import { Habit } from '../components/Habit';
 import { Menu } from '../components/Menu'
 import { Colors } from '../components/Colors'
-import { findNFT } from '../src';
+import { findNFT, getStakedNFTs } from '../src';
+import { UnstakedHabit } from '../components/UnstakedHabit';
+import { StakedHabit } from '../components/StakedHabit';
 
 export default function MainScreen({ navigation }: any) {
   const {connection} = useConnection();
@@ -19,6 +20,7 @@ export default function MainScreen({ navigation }: any) {
   const [balance, setBalance] = useState<number | null>(null);
   const [nfts, setNFTs] = useState<any>([]);
   const [loading, setLoading] = useState(false);
+  const [stakedNFTs, setStakedNFTs] = useState<any>([]);
 
   const fetchAndUpdateBalance = useCallback(
     async (account: Account) => {
@@ -26,10 +28,6 @@ export default function MainScreen({ navigation }: any) {
       const fetchedBalance = await connection.getBalance(account.publicKey);
       console.log('Balance fetched: ' + fetchedBalance);
       setBalance(fetchedBalance);
-      setLoading(true)
-      const data = await findNFT(account.publicKey);
-      setNFTs(await data.results);
-      setLoading(false)
     },
     [balance],
   );
@@ -42,6 +40,19 @@ export default function MainScreen({ navigation }: any) {
   }, [fetchAndUpdateBalance, selectedAccount]);
 
 
+  useEffect(() => {
+    async function getNFTs() {
+      if (selectedAccount) {
+        setLoading(true)
+        const data = await findNFT(selectedAccount!.publicKey);
+        setNFTs(await data.results);
+        setLoading(false)  
+        const stakedNFTs = await getStakedNFTs(selectedAccount!.publicKey);
+        setStakedNFTs(stakedNFTs.results);  
+      }
+    };
+    getNFTs();
+  }, [selectedAccount])
   if (loading) {
     return (
       <ImageBackground source={require('../img/backgroundGradient.png')} style={styles.backgroundImage}>
@@ -71,35 +82,33 @@ export default function MainScreen({ navigation }: any) {
           }
         </View>
         {
-            selectedAccount ? (
-              <View style={styles.contentContainer}>
-              <Text style={styles.baseText}>
-                <Text style={styles.title}>Your {nfts.length} Habits</Text>
-                  <View style={styles.contentContainer}>
-                  {
-                      nfts?.map((nft: any, index: number) => {
-                        return (
-                          <Habit nft={nft} key={`${nft.name}_${index}`} imageURI={nft.image} name={nft.name} attributes={nft.attributes}/>
-                        )
-                      })
-                    }
-                  </View>
-                  </Text>
-              </View>
-            ) : (
-              <Text style={styles.baseText}>
-                <Text style={styles.title}>Connect your Solana Wallet{"\n"}to view your habits.</Text>
-              </Text>
+          nfts.map((nft: any) => {
+            return (
+              <UnstakedHabit key={`${nft.name}_${nft.id}`} nft={nft}/>
             )
-          }
-          {
-            selectedAccount ? (
-                <Menu navigation={navigation}/>
-            ): (
-              // <></>
+          })
+        }
+        {
+          stakedNFTs.length ? (
+            <Text>Staked NFTs</Text>
+          ) : (
+            <></>
+          )
+        }
+        {
+          stakedNFTs.map((nft: any) => {
+            return (
+              <StakedHabit key={`${nft.name}_${nft.id}`} nft={nft}/>
+            )
+          })
+        }
+        {
+          selectedAccount ? (
               <Menu navigation={navigation}/>
-            )
-          }
+          ): (
+            <></>
+          )
+        }
     </View>
     </ImageBackground>
   )};
