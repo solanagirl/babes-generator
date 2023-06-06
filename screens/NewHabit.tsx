@@ -39,20 +39,6 @@ export default function NewHabit({ navigation }: any) {
     }
   }
 
-  const icons = [
-    'https://bafkreiglw4rpka4idig6o2sa5gt2pa7owgkf5nwvsu2c3mms4nfiubb7i4.ipfs.nftstorage.link/'
-  ]
-
-  // useEffect(() => {
-  //   if (!selectedAccount) {
-  //     return;
-  //   }
-  //   async function findOwnedNFT() {
-  //     const data = await findNFT(address);
-  //     console.log('nft', data)
-  //   }
-  //   findOwnedNFT();
-  // }, [data]);
   switch (state) {
     case 'success':
       setTimeout(() => {
@@ -65,12 +51,6 @@ export default function NewHabit({ navigation }: any) {
             <View>
               <Text style={styles.subtitle}>Successfully created new habit!</Text>
             </View>
-            <View>
-              <Text style={styles.subtitle}>Set your milestone</Text>
-              <ScrollView>
-
-              </ScrollView>
-            </View>
           </View>
         </ImageBackground>
       )
@@ -81,25 +61,6 @@ export default function NewHabit({ navigation }: any) {
             <Text style={styles.subtitle}>Loading</Text>
             </View>
           </ImageBackground>
-      )
-    case 'nft':
-      return (
-        <ImageBackground source={require('../img/backgroundGradient.png')} style={styles.backgroundImage}>
-          <View style={styles.mainContainer}>
-            <Menu navigation={navigation} />
-            <View style={styles.contentContainer}>
-              <TouchableOpacity activeOpacity={0.5} // Button not showing
-                  style={styles.button}
-                  onPress={() => { mintHabitNFT(); setState('loading') }}>
-                    <Text style={styles.textBase}>
-                      <Text style={styles.buttonText}>Next</Text>
-                    </Text>
-                </TouchableOpacity>
-              </View>
-            <Text style={styles.subtitle}>Track your progress with tokens. Press and hold to mint your new habit.</Text>
-          </View>
-          <Text style={styles.subtitle}>Choose an Icon for {name}</Text>
-        </ImageBackground>
       )
     case 'info':
       return (
@@ -134,15 +95,39 @@ export default function NewHabit({ navigation }: any) {
               </Text>
             </TouchableOpacity>
           </View>
+
+          <Text style={styles.textBase}>
+            <Text style={styles.text}>Set your next Milestone</Text>
+          </Text>
+
+          <View style={styles.buttonRow}>
+            <TouchableOpacity activeOpacity={0.5} onPress={() => { setMilestone(7) }} style={milestone == 7 ? styles.buttonPressed : styles.button}>
+              <Text style={styles.textBase}>
+                <Text style={styles.buttonText}>7 days</Text>
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity activeOpacity={0.5} onPress={() => { setMilestone(30) }} style={milestone == 30 ? styles.buttonPressed : styles.button}>
+              <Text style={styles.textBase}>
+                <Text style={styles.buttonText}>30 days</Text>
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity activeOpacity={0.5} onPress={() => { setMilestone(90) }} style={milestone == 90 ? styles.buttonPressed : styles.button}>
+              <Text style={styles.textBase}>
+                <Text style={styles.buttonText}>90 days</Text>
+              </Text>
+            </TouchableOpacity>
+          </View>
           {
-            frequency !== '' ? (
+            frequency !== '' && milestone ? (
               <TouchableOpacity activeOpacity={0.5} // Button not showing
-                style={styles.button}
-                onPress={() => { setState('nft') }}>
-                  <Text style={styles.textBase}>
-                    <Text style={styles.buttonText}>Next</Text>
-                  </Text>
-              </TouchableOpacity>
+                  style={styles.button}
+                  onPress={() => { mintHabitNFT(); setState('loading') }}>
+                    <Text style={styles.textBase}>
+                      <Text style={styles.buttonText}>Next</Text>
+                    </Text>
+                </TouchableOpacity>
             ) : (
               <></>
             )

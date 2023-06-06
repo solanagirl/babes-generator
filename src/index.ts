@@ -1,14 +1,11 @@
 import axios from 'axios'
 import { Program, AnchorProvider, web3, Idl, BN, Wallet } from "@coral-xyz/anchor";
-import { Transaction, Connection, clusterApiUrl, MessageV0 } from '@solana/web3.js'
-import { createBurnCheckedInstruction, getOrCreateAssociatedTokenAccount } from '@solana/spl-token'
-import { PublicKey } from '@metaplex-foundation/js';
+import { Transaction, Connection, clusterApiUrl, PublicKey, SystemProgram, TransactionInstruction, Keypair, } from '@solana/web3.js'
 import * as idl from './idl.json';
 import { Web3MobileWallet } from '@solana-mobile/mobile-wallet-adapter-protocol-web3js';
 import { transact } from '@solana-mobile/mobile-wallet-adapter-protocol-web3js' 
-import { VersionedTransaction } from '@solana/web3.js';
-import { VersionedMessage } from '@solana/web3.js';
-import { getAssociatedTokenAddressSync } from '@solana/spl-token';
+import { MINT_SIZE, TOKEN_PROGRAM_ID, createAssociatedTokenAccountInstruction, createInitializeMintInstruction, createMintToInstruction, getAssociatedTokenAddressSync } from '@solana/spl-token';
+import { PROGRAM_ID, createCreateMetadataAccountV3Instruction } from '@metaplex-foundation/mpl-token-metadata';
 
 async function createNFT(name: string, targetAddress: PublicKey, uri: string, attributes: any) {
     axios.defaults.headers.common["Authorization"] = `Bearer 5ce739510d5961.1c3a184261ed46dfb66e214f3e19480e`;
@@ -125,7 +122,233 @@ async function getStakedNFTs(publicKey: PublicKey) {
   return nfts;
 }
 
-async function unstakeNFT(smsWallet: Web3MobileWallet, publicKey: PublicKey) {
+
+async function initStakePool(smsWallet: Web3MobileWallet, publicKey: PublicKey, mint: Keypair) {
+  const connection = new Connection(clusterApiUrl('devnet'), 'confirmed');
+
+  const wallet: Wallet = {
+    //@ts-ignore
+      signTransaction: async (transaction: Transaction) => {
+        const signedTransaction: Transaction = await transact(async wallet => {
+          const transactions: Transaction[] = await wallet.signTransactions({
+            transactions: [transaction],
+          });
+          return transactions[0];
+        });
+        return signedTransaction;
+      },
+      //@ts-ignore
+      signAllTransactions: async (transactions: Transaction[]) => {
+        const signedTransactions: Transaction[] = await transact(async wallet => {
+          // Construct a transaction then request for signing
+          const tx: Transaction[] = await wallet.signTransactions({
+            transactions: transactions
+          });
+    
+          return tx;
+        });
+        return signedTransactions;
+      },
+      publicKey
+  };
+  
+  const provider = new AnchorProvider(connection, wallet, {preflightCommitment: 'confirmed', commitment: 'confirmed'});
+  const program = new Program(
+      idl as Idl,
+      'B9cAgrXZ51EV8GXEGVgHuVjFAsdtJ1qm1aqi8KHyFXQd',
+      provider,
+    ) as Program;  
+      
+  const [stakePoolTokenAccount] = PublicKey.findProgramAddressSync(
+    [Buffer.from("stake_pool")],
+    program.programId
+  );
+
+  const tx = new Transaction()
+
+  tx.add(await program.methods
+  .initStakepool()
+  .accounts({
+    signer: publicKey,
+    stakePoolTokenAccount: stakePoolTokenAccount,
+    mint: mint.publicKey
+  }).transaction());
+
+
+  const latestBlockhash = (await connection.getLatestBlockhash()).blockhash;
+
+  tx.feePayer = publicKey;
+  tx.recentBlockhash = latestBlockhash;
+
+  
+  const simulate = await connection.simulateTransaction(tx);
+  console.log(simulate)
+  console.log("Starting Init Pool"); 
+  const sendTransactionHash = await smsWallet.signAndSendTransactions({transactions: [tx]});
+  console.log(sendTransactionHash);
+  return sendTransactionHash; 
+}
+
+async function mintNFT(wallet: any, publicKey: PublicKey, stakePoolAccount: PublicKey, connection: Connection, uri: string) {
+  const mint = Keypair.generate();
+  const programAccount = new PublicKey('B9cAgrXZ51EV8GXEGVgHuVjFAsdtJ1qm1aqi8KHyFXQd')
+  let Blockhash = (await connection.getLatestBlockhash('confirmed'));
+  // const res = await initStakePool(wallet, publicKey, mint);
+  // console.log(res)
+  console.log(mint.publicKey)
+  const associatedToken = await getAssociatedTokenAddressSync(mint.publicKey, stakePoolAccount, true)
+  const tokenPubkey = PublicKey.findProgramAddressSync(
+      [ Buffer.from('metadata'), PROGRAM_ID.toBuffer(), mint.publicKey.toBuffer()],
+      PROGRAM_ID,
+  )[0];
+  const token_transaction = new Transaction();
+  token_transaction.feePayer = publicKey;
+  token_transaction.recentBlockhash = Blockhash.blockhash;
+
+  console.log('Create Mint Account Instructions')
+  const createMintAccountInstruction = SystemProgram.createAccount({
+      fromPubkey: publicKey,
+      newAccountPubkey: mint.publicKey,
+      lamports: await connection.getMinimumBalanceForRentExemption(MINT_SIZE),
+      space: MINT_SIZE,
+      programId: TOKEN_PROGRAM_ID,
+  });
+  token_transaction.instructions.push(createMintAccountInstruction);
+
+  console.log('Create Mint Instructions');
+  const initializeMintInstruction = createInitializeMintInstruction(
+      mint.publicKey,
+      9,
+      programAccount,
+      programAccount,
+      TOKEN_PROGRAM_ID
+  );
+  token_transaction.instructions.push(initializeMintInstruction)
+
+  console.log('Create Token Instruction')
+  const initializeTokenInstruction = createAssociatedTokenAccountInstruction(
+      publicKey, 
+      associatedToken,
+      stakePoolAccount,
+      mint.publicKey,
+      TOKEN_PROGRAM_ID
+  )
+  token_transaction.instructions.push(initializeTokenInstruction);
+
+  console.log('Create Mint to Token Instruction')
+  const initializeMintToTokenInstruction = createMintToInstruction(
+      mint.publicKey,
+      associatedToken,
+      programAccount,
+      1000000000000
+  )
+  token_transaction.instructions.push(initializeMintToTokenInstruction);
+
+  console.log('Create Metadata Account')
+  const createV3MetadataInstruction = createCreateMetadataAccountV3Instruction(
+      {
+          metadata: tokenPubkey,
+          mint: mint.publicKey,
+          mintAuthority: programAccount,
+          payer: publicKey,
+          updateAuthority: programAccount,
+      }, {
+          createMetadataAccountArgsV3: {
+              data: {
+                  name: 'Determination Points',
+                  symbol: 'DP',
+                  uri: uri,
+                  sellerFeeBasisPoints: 500,
+                  creators: null,
+                  collection: null,
+                  uses: null
+              },
+              isMutable: true,
+              collectionDetails: null
+          }
+      }
+  )
+
+  token_transaction.instructions.push(createV3MetadataInstruction);
+
+
+  const simulate = await connection.simulateTransaction(token_transaction);
+  console.log(simulate)
+
+  console.log('Sending Transaction');
+
+  try {
+    const tx = await wallet.signAndSendTransactions({transactions: [token_transaction], minContextSlot: Blockhash.lastValidBlockHeight});
+    return tx;
+  } catch (err) {
+    console.log(err)
+  } finally {
+    return mint.publicKey;
+  }
+}
+
+
+async function mintToStakePool(smsWallet: Web3MobileWallet, publicKey: PublicKey) {
+  const connection = new Connection(clusterApiUrl('devnet'), 'confirmed');
+  const wallet: Wallet = {
+    //@ts-ignore
+      signTransaction: async (transaction: Transaction) => {
+        const signedTransaction: Transaction = await transact(async wallet => {
+          const transactions: Transaction[] = await wallet.signTransactions({
+            transactions: [transaction],
+          });
+          return transactions[0];
+        });
+        return signedTransaction;
+      },
+      //@ts-ignore
+      signAllTransactions: async (transactions: Transaction[]) => {
+        const signedTransactions: Transaction[] = await transact(async wallet => {
+          // Construct a transaction then request for signing
+          const tx: Transaction[] = await wallet.signTransactions({
+            transactions: transactions
+          });
+    
+          return tx;
+        });
+        return signedTransactions;
+      },
+      publicKey
+  };
+  
+  const provider = new AnchorProvider(connection, wallet, {preflightCommitment: 'confirmed', commitment: 'confirmed'});
+  const program = new Program(
+      idl as Idl,
+      'B9cAgrXZ51EV8GXEGVgHuVjFAsdtJ1qm1aqi8KHyFXQd',
+      provider,
+    ) as Program;  
+      
+  const [stakePoolAccount] = PublicKey.findProgramAddressSync(
+    [Buffer.from("stake_pool")],
+    program.programId
+  );
+  
+  const nft = await mintNFT(smsWallet, publicKey, stakePoolAccount, connection, 'ipfs://bafybeic3c5k3p2tu4rke43d5ghrvpymlhfajekggpawnahgn72gpnrntv4')
+
+
+  console.log(nft)
+  // const latestBlockhash = (await connection.getLatestBlockhash()).blockhash;
+
+  // tx.feePayer = publicKey;
+  // tx.recentBlockhash = latestBlockhash;
+
+  
+  // const simulate = await connection.simulateTransaction(tx);
+  // console.log(simulate)
+  // console.log("Starting Init Pool"); 
+  // const sendTransactionHash = await smsWallet.signAndSendTransactions({transactions: [tx]});
+  // console.log(sendTransactionHash);
+  // return sendTransactionHash; 
+}
+
+
+
+async function unstakeNFT(smsWallet: Web3MobileWallet, publicKey: PublicKey, mint: PublicKey, tokenAccount: PublicKey) {
   const connection = new Connection(clusterApiUrl('devnet'), 'confirmed');
 
   const wallet: Wallet = {
@@ -175,22 +398,16 @@ async function unstakeNFT(smsWallet: Web3MobileWallet, publicKey: PublicKey) {
     [Buffer.from("stake_pool")],
     program.programId
   );
-    console.log(stakerStakePoolAccount);
-
-  
-  const nft = (await findNFT(stakerStakeTokenAccount)).results[0];
-  const stakeTokenAccount = getAssociatedTokenAddressSync(new PublicKey(nft.mintAddress), new PublicKey(nft.ownerAddress), true);
 
   const tx = new Transaction()
-  
   tx.add(await program.methods
   .unstake()
   .accounts({
       stakeInfo: stakeInfo,
       signer: publicKey,
-      mint: nft.mintAddress,
+      mint: mint,
       stakerStakeTokenAccount: stakerStakeTokenAccount,
-      stakerTokenAccount: stakeTokenAccount,
+      stakerTokenAccount: tokenAccount,
       stakePoolTokenAccount: stakerStakePoolAccount
   }).transaction());
 
@@ -199,10 +416,16 @@ async function unstakeNFT(smsWallet: Web3MobileWallet, publicKey: PublicKey) {
   tx.feePayer = publicKey;
   tx.recentBlockhash = latestBlockhash;
 
+  const simulate = await connection.simulateTransaction(tx);
+  console.log(simulate)
   console.log("Starting Unstake"); 
-  const sendTransactionHash = await smsWallet.signAndSendTransactions({transactions: [tx]});
-  console.log(sendTransactionHash);
-  return sendTransactionHash; 
+  try {
+    const sendTransactionHash = await smsWallet.signAndSendTransactions({transactions: [tx]});
+    console.log(sendTransactionHash);
+    return sendTransactionHash; 
+  } catch (err) {
+    console.log(err)
+  }
 }
 
-export { createNFT, findNFT, stakeNFT, getStakedNFTs, updateNFT, unstakeNFT }
+export { createNFT, findNFT, stakeNFT, getStakedNFTs, updateNFT, unstakeNFT, mintToStakePool }

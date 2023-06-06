@@ -12,6 +12,7 @@ import { Colors } from './Colors';
 import { updateNFT } from '../src';
 import moment from 'moment';
 import Unstake from './Unstake';
+import Burn from './Burn';
 
 type Props = Readonly<{
   nft: any,

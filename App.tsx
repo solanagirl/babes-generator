@@ -6,6 +6,7 @@ import {AuthorizationProvider} from './components/providers/AuthorizationProvide
 import {Header} from './components/Header';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {Provider as PaperProvider} from 'react-native-paper';
 
 import MainScreen from './screens/MainScreen';
 import NewHabit from './screens/NewHabit';
@@ -17,20 +18,22 @@ const Stack = createNativeStackNavigator();
 export default function App() {
   return (
     <ConnectionProvider
-      config={{commitment: 'processed'}}
+      config={{commitment: 'confirmed'}}
       endpoint={DEVNET_ENDPOINT}>
       <AuthorizationProvider>
         <NavigationContainer>
         <SafeAreaView style={styles.shell}>
-          <Stack.Navigator>
-            <Stack.Screen
-              name="Home"
-              component={MainScreen}
-              options={{ header: (props) => <Header date={true}></Header> }}
-            />
-            <Stack.Screen name="NewHabit" component={NewHabit} options={{ header: (props) => <Header date={false}></Header> }} />
-            <Stack.Screen name="Calendar" component={Calendar} options={{ header: (props) => <Header date={true}></Header> }} />
-          </Stack.Navigator>
+          <PaperProvider>
+            <Stack.Navigator>
+              <Stack.Screen
+                name="Home"
+                component={MainScreen}
+                options={{ header: (props) => <Header date={true}></Header> }}
+              />
+              <Stack.Screen name="NewHabit" component={NewHabit} options={{ header: (props) => <></> }} />
+              <Stack.Screen name="Calendar" component={Calendar} options={{ header: (props) => <Header date={true}></Header> }} />
+            </Stack.Navigator>
+            </PaperProvider>
           </SafeAreaView>
         </NavigationContainer>
       </AuthorizationProvider>

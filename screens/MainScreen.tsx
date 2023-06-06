@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {Image, ImageBackground, Pressable, ScrollView, StyleSheet, Text, View} from 'react-native';
+import {Image, RefreshControl, ImageBackground, ScrollView, StyleSheet, Text, View} from 'react-native';
 
 import {
   useAuthorization,
@@ -13,16 +13,19 @@ import { Colors } from '../components/Colors'
 import { findNFT, getStakedNFTs } from '../src';
 import { UnstakedHabit } from '../components/UnstakedHabit';
 import { StakedHabit } from '../components/StakedHabit';
+import { useGuardedCallback } from '../src/useGuardedCallback';
+import { transact } from '@solana-mobile/mobile-wallet-adapter-protocol-web3js';
 
 export default function MainScreen({ navigation }: any) {
   const {connection} = useConnection();
-  const {selectedAccount} = useAuthorization();
+  const {authorizeSession, selectedAccount} = useAuthorization();
   const [balance, setBalance] = useState<number | null>(null);
   const [nfts, setNFTs] = useState<any>([]);
   const [loading, setLoading] = useState(false);
   const [stakedNFTs, setStakedNFTs] = useState<any>([]);
+  const [authorizationInProgress, setAuthorizationInProgress] = useState(false);
 
-  const fetchAndUpdateBalance = useCallback(
+  const fetchAndUpdateBalance = useGuardedCallback(
     async (account: Account) => {
       console.log('Fetching balance for: ' + account.publicKey);
       const fetchedBalance = await connection.getBalance(account.publicKey);
@@ -32,6 +35,18 @@ export default function MainScreen({ navigation }: any) {
     [balance],
   );
 
+  const onRefresh = useCallback(async () => {
+    setLoading(true)
+    if (selectedAccount) {
+      const data = await findNFT(selectedAccount.publicKey);
+      setNFTs(await data.results);
+      const stakedNFTs = await getStakedNFTs(selectedAccount.publicKey);
+      setStakedNFTs(stakedNFTs.results);  
+      setLoading(false)    
+    }
+}, [loading]);
+
+
   useEffect(() => {
     if (!selectedAccount) {
       return;
@@ -39,16 +54,15 @@ export default function MainScreen({ navigation }: any) {
     fetchAndUpdateBalance(selectedAccount);
   }, [fetchAndUpdateBalance, selectedAccount]);
 
-
   useEffect(() => {
     async function getNFTs() {
       if (selectedAccount) {
         setLoading(true)
         const data = await findNFT(selectedAccount!.publicKey);
         setNFTs(await data.results);
-        setLoading(false)  
         const stakedNFTs = await getStakedNFTs(selectedAccount!.publicKey);
         setStakedNFTs(stakedNFTs.results);  
+        setLoading(false)  
       }
     };
     getNFTs();
@@ -66,7 +80,10 @@ export default function MainScreen({ navigation }: any) {
   } else {
     return (
       <ImageBackground source={require('../img/backgroundGradient.png')} style={styles.backgroundImage}>
-      <View style={styles.container}>
+        <ScrollView refreshControl={
+          <RefreshControl refreshing={loading} onRefresh={onRefresh} />
+        }>
+        <View style={styles.container}>
         <View style={styles.mainContainer}>
           <Text style={styles.baseText}>
             <Text style={styles.title}>
@@ -90,18 +107,24 @@ export default function MainScreen({ navigation }: any) {
         }
         {
           stakedNFTs.length ? (
-            <Text>Staked NFTs</Text>
+            <View>
+              <Text>Staked NFTs</Text>
+              {
+                stakedNFTs.map((nft: any) => {
+                  return (
+                    <StakedHabit key={`${nft.name}_${nft.id}`} nft={nft}/>
+                  )
+                })                
+              }
+              </View>
           ) : (
             <></>
           )
         }
         {
-          stakedNFTs.map((nft: any) => {
-            return (
-              <StakedHabit key={`${nft.name}_${nft.id}`} nft={nft}/>
-            )
-          })
         }
+        </View>
+        </ScrollView>
         {
           selectedAccount ? (
               <Menu navigation={navigation}/>
@@ -109,7 +132,6 @@ export default function MainScreen({ navigation }: any) {
             <></>
           )
         }
-    </View>
     </ImageBackground>
   )};
 }

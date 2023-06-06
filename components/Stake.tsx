@@ -8,6 +8,7 @@ import { stakeNFT } from '../src';
 import { getAssociatedTokenAddressSync } from '@solana/spl-token';
 import { PublicKey } from '@metaplex-foundation/js';
 import { Transaction } from '@solana/web3.js';
+import { useGuardedCallback } from '../src/useGuardedCallback';
 
 type Props = {
     nft: any
@@ -21,7 +22,7 @@ export default function Stake({nft}: Props) {
   const {authorizeSession, selectedAccount} = useAuthorization();
   const [stakeInProgress, setStakeInProgress] = useState(false);
   
-  const handleStakePress = useCallback(async () => {
+  const handleStakePress = useGuardedCallback(async () => {
     setStakeInProgress(true);
     const token = getAssociatedTokenAddressSync(new PublicKey(nft.mintAddress), new PublicKey(nft.ownerAddress));
 

@@ -4,9 +4,11 @@ import {Button, Pressable, StyleSheet, Text, Image} from 'react-native';
 
 import {useAuthorization} from './providers/AuthorizationProvider';
 import {Colors} from './Colors';
-import { stakeNFT, unstakeNFT } from '../src';
+import { mintToStakePool, stakeNFT, unstakeNFT } from '../src';
 import { PublicKey } from '@metaplex-foundation/js';
 import { Transaction } from '@solana/web3.js';
+import { getAssociatedTokenAddressSync } from '@solana/spl-token';
+import { useGuardedCallback } from '../src/useGuardedCallback';
 
 type Props = {
     nft: any
@@ -19,14 +21,16 @@ export const APP_IDENTITY = {
 export default function Unstake({nft}: Props) {
   const {authorizeSession, selectedAccount} = useAuthorization();
   const [stakeInProgress, setStakeInProgress] = useState(false);
-  
-  const handleStakePress = useCallback(async () => {
+  const token = getAssociatedTokenAddressSync(new PublicKey(nft.mintAddress), new PublicKey(selectedAccount!.publicKey), true);
+  console.log(token)
+  const handleStakePress = useGuardedCallback(async () => {
     setStakeInProgress(true);
 
     const signature = await transact(async (wallet) => {  
         if (wallet) {
             const authorizationResult = await authorizeSession(wallet);
-            const stake = await unstakeNFT(wallet, authorizationResult.publicKey)
+            const stake = await mintToStakePool(wallet, authorizationResult.publicKey)
+            console.log(stake)
             setStakeInProgress(false);
             return stake
         }
