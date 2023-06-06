@@ -15,7 +15,7 @@ type Props = {
   date: boolean
 }
 export function Header({date}: Props) {
-  const currentDate = moment().format('MMM, Do, YYYY');
+  const currentDate = moment().format('MMM Do, YYYY');
   //   const isDarkMode = useColorScheme() === 'dark';
   if (date) {
     return (

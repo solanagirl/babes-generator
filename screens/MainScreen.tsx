@@ -13,6 +13,7 @@ import { Menu } from '../components/Menu'
 import { Colors } from '../components/Colors'
 import { findNFT } from '../src';
 import LoadingComponent from '../components/Loading'
+import NotificationButton from '../components/NotificationButton';
 
 export default function MainScreen({ navigation }: any) {
   const {connection} = useConnection();
@@ -101,9 +102,9 @@ export default function MainScreen({ navigation }: any) {
               <Menu navigation={navigation}/>
             )
           }
+        
     </View>
-    <LoadingComponent/>
-    
+    <NotificationButton />
     </ImageBackground>
   )};
 }

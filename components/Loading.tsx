@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Image, StyleSheet, Animated, Easing } from 'react-native';
+import { Colors } from './Colors';
 
 const LoadingComponent = () => {
   const [rotation] = useState(new Animated.Value(0));
@@ -13,7 +14,7 @@ const LoadingComponent = () => {
       Animated.timing(rotation, {
         toValue: 1,
         duration: 2000,
-        easing: Easing.linear,
+        easing: Easing.inOut(Easing.ease),
         useNativeDriver: true,
       })
     ).start();
@@ -27,8 +28,9 @@ const LoadingComponent = () => {
   return (
     <View style={styles.container}>
       <Animated.Image
-        source={require('../img/add.png')}
+        source={require('../img/loading.png')}
         style={[styles.image, { transform: [{ rotate: rotateInterpolate }] }]}
+        tintColor={Colors.font}
       />
     </View>
   );
@@ -41,8 +43,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   image: {
-    width: 100,
-    height: 100,
+    width: 150,
+    height: 150,
   },
 });
 
