@@ -11,6 +11,8 @@ import DisconnectButton from '../components/DisconnectButton';
 import { Menu } from '../components/Menu'
 import { Colors } from '../components/Colors'
 import { findNFT, getStakedNFTs } from '../src';
+import LoadingComponent from '../components/Loading'
+import NotificationButton from '../components/NotificationButton';
 import { UnstakedHabit } from '../components/UnstakedHabit';
 import { StakedHabit } from '../components/StakedHabit';
 import { useGuardedCallback } from '../src/useGuardedCallback';

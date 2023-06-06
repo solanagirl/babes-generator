@@ -12,6 +12,7 @@ import { Menu } from '../components/Menu';
 import { UnstakedHabit } from '../components/UnstakedHabit';
 import { createNFT, findNFT } from '../src';
 import moment from 'moment';
+import LoadingComponent from '../components/Loading';
 
 export default function NewHabit({ navigation }: any) {
   const { connection } = useConnection();
@@ -39,6 +40,7 @@ export default function NewHabit({ navigation }: any) {
     }
   }
 
+console.log(state)
   switch (state) {
     case 'success':
       setTimeout(() => {
@@ -56,86 +58,83 @@ export default function NewHabit({ navigation }: any) {
       )
     case 'loading':
       return (
-          <ImageBackground source={require('../img/backgroundGradient.png')} style={styles.backgroundImage}>
-            <View style={styles.mainContainer}>
-            <Text style={styles.subtitle}>Loading</Text>
+        <ImageBackground source={require('../img/backgroundGradient.png')} style={styles.backgroundImage}>
+          <LoadingComponent/>
+        </ImageBackground>
+      )
+    case 'nft':
+      return (
+        <ImageBackground source={require('../img/backgroundGradient.png')} style={styles.backgroundImage}>
+          <Menu navigation={navigation} />
+          <View style={styles.mainContainer}>
+            <View style={styles.contentContainer}>
+              <TouchableOpacity activeOpacity={0.5} // Button not showing
+                style={styles.button}
+                onPress={() => { mintHabitNFT(); setState('loading') }}>
+                <Text style={styles.textBase}>
+                  <Text style={styles.buttonText}>Next</Text>
+                </Text>
+              </TouchableOpacity>
             </View>
-          </ImageBackground>
+            <Text style={styles.textBase}>
+              <Text style={styles.subtitle}>Track your progress with tokens. Press and hold to mint your new habit.</Text>
+            </Text>
+          </View>
+          <Text style={styles.textBase}>
+            <Text style={styles.subtitle}>Choose an Icon for {name}</Text>
+          </Text>
+        </ImageBackground>
       )
     case 'info':
       return (
         <ImageBackground source={require('../img/backgroundGradient.png')} style={styles.backgroundImage}>
-      <Menu navigation={navigation} />
-      <View style={styles.mainContainer}>
-        <View style={styles.topContainer}>
-          <Text style={styles.textBase}>
-            <Text style={styles.subtitle}>Track your new Beginnings.</Text>
-          </Text>
-          <TextInput onChangeText={(text) => { setName(text); }} placeholderTextColor="#eee"placeholder='Name your habit...' value={name} style={styles.input}></TextInput>
-          <Text style={styles.textBase}>
-            <Text style={styles.text}>How often shall we check in?</Text>
-          </Text>
-
-          <View style={styles.buttonRow}>
-            <TouchableOpacity activeOpacity={0.5} onPress={() => { setFrequency('daily') }} style={frequency == 'daily' ? styles.buttonPressed : styles.button}>
+          <Menu navigation={navigation} />
+          <View style={styles.mainContainer}>
+            <View style={styles.topContainer}>
               <Text style={styles.textBase}>
-                <Text style={styles.buttonText}>Daily</Text>
+                <Text style={styles.subtitle}>Track your new Beginnings.</Text>
               </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity activeOpacity={0.5} onPress={() => { setFrequency('weekly') }} style={frequency == 'weekly' ? styles.buttonPressed : styles.button}>
+              <TextInput onChangeText={(text) => { setName(text); }} placeholderTextColor="#eee" placeholder='Name your habit...' value={name} style={styles.input}></TextInput>
               <Text style={styles.textBase}>
-                <Text style={styles.buttonText}>Weekly</Text>
+                <Text style={styles.text}>How often shall we check in?</Text>
               </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity activeOpacity={0.5} onPress={() => { setFrequency('monthly') }} style={frequency == 'monthly' ? styles.buttonPressed : styles.button}>
-              <Text style={styles.textBase}>
-                <Text style={styles.buttonText}>Monthly</Text>
-              </Text>
-            </TouchableOpacity>
-          </View>
-
-          <Text style={styles.textBase}>
-            <Text style={styles.text}>Set your next Milestone</Text>
-          </Text>
-
-          <View style={styles.buttonRow}>
-            <TouchableOpacity activeOpacity={0.5} onPress={() => { setMilestone(7) }} style={milestone == 7 ? styles.buttonPressed : styles.button}>
-              <Text style={styles.textBase}>
-                <Text style={styles.buttonText}>7 days</Text>
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity activeOpacity={0.5} onPress={() => { setMilestone(30) }} style={milestone == 30 ? styles.buttonPressed : styles.button}>
-              <Text style={styles.textBase}>
-                <Text style={styles.buttonText}>30 days</Text>
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity activeOpacity={0.5} onPress={() => { setMilestone(90) }} style={milestone == 90 ? styles.buttonPressed : styles.button}>
-              <Text style={styles.textBase}>
-                <Text style={styles.buttonText}>90 days</Text>
-              </Text>
-            </TouchableOpacity>
-          </View>
-          {
-            frequency !== '' && milestone ? (
-              <TouchableOpacity activeOpacity={0.5} // Button not showing
-                  style={styles.button}
-                  onPress={() => { mintHabitNFT(); setState('loading') }}>
+    
+              <View style={styles.buttonRow}>
+                <TouchableOpacity activeOpacity={0.5} onPress={() => { setFrequency('daily') }} style={frequency == 'daily' ? styles.buttonPressed : styles.button}>
+                  <Text style={styles.textBase}>
+                    <Text style={styles.buttonText}>Daily</Text>
+                  </Text>
+                </TouchableOpacity>
+    
+                <TouchableOpacity activeOpacity={0.5} onPress={() => { setFrequency('weekly') }} style={frequency == 'weekly' ? styles.buttonPressed : styles.button}>
+                  <Text style={styles.textBase}>
+                    <Text style={styles.buttonText}>Weekly</Text>
+                  </Text>
+                </TouchableOpacity>
+    
+                <TouchableOpacity activeOpacity={0.5} onPress={() => { setFrequency('monthly') }} style={frequency == 'monthly' ? styles.buttonPressed : styles.button}>
+                  <Text style={styles.textBase}>
+                    <Text style={styles.buttonText}>Monthly</Text>
+                  </Text>
+                </TouchableOpacity>
+              </View>
+              {
+                frequency !== '' && name !== '' ? (
+                  <TouchableOpacity activeOpacity={0.5} 
+                    style={StyleSheet.compose(styles.button, {marginTop: 50, width: '100%'})}
+                    onPress={() => { setState('nft') }}>
                     <Text style={styles.textBase}>
                       <Text style={styles.buttonText}>Next</Text>
                     </Text>
-                </TouchableOpacity>
-            ) : (
-              <></>
-            )
-          }
-        </View>
-      </View>
-    </ImageBackground>
-      )
+                  </TouchableOpacity>
+                ) : (
+                  <></>
+                )
+              }
+            </View>
+          </View>
+        </ImageBackground>
+      )    
     default:
       return (
         <>
@@ -157,17 +156,17 @@ export default function NewHabit({ navigation }: any) {
                   </Text>
                 </TouchableOpacity>
                 {
-                state == 'selected' ? (
-                  <TouchableOpacity activeOpacity={0.5}
-                    onPress={() => { setState('info') }} style={styles.button}>
-                    <Text style={styles.textBase}>
-                      <Text style={styles.buttonText}>Next</Text>
-                    </Text>
-                  </TouchableOpacity>
-                ) : (
-                  <></>
-                )
-              }
+                  state == 'selected' ? (
+                    <TouchableOpacity activeOpacity={0.5}
+                      onPress={() => { setState('info') }} style={StyleSheet.compose(styles.button, {marginTop: 60})}>
+                      <Text style={styles.textBase}>
+                        <Text style={styles.buttonText}>Next</Text>
+                      </Text>
+                    </TouchableOpacity>
+                  ) : (
+                    <></>
+                  )
+                }
               </View>
             </View>
           </ImageBackground>

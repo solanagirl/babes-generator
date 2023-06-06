@@ -20,7 +20,7 @@ export function Milestone({nft}: Props) {
   return (
     <View style={styles.container}>
         <View>
-            <Text style={styles.title}>{ nft.attributes.newOrQuit == 'new' ? 'Starting ' : 'Quitting ' }{nft.name}</Text>
+            <Text style={styles.title}>{ nft.attributes.status == 'new' ? 'Starting ' : 'Quitting ' }{nft.name}</Text>
             <Text>Goal: {nft.attributes.milestone} Days</Text>
             <Text>Streak: {nft.attributes.streak} Days</Text>
         </View>

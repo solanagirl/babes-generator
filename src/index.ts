@@ -278,7 +278,18 @@ async function mintNFT(wallet: any, publicKey: PublicKey, stakePoolAccount: Publ
   console.log('Sending Transaction');
 
   try {
-    const tx = await wallet.signAndSendTransactions({transactions: [token_transaction], minContextSlot: Blockhash.lastValidBlockHeight});
+    const tx = await wallet.signTransactions({transactions: [token_transaction], minContextSlot: Blockhash.lastValidBlockHeight});
+      let blockheight = await connection.getBlockHeight();
+
+    while (blockheight < Blockhash.lastValidBlockHeight) {
+      connection.sendRawTransaction(tx, {
+        skipPreflight: true,
+      });
+      await setTimeout(()=> {}, 500);
+      blockheight = await connection.getBlockHeight();
+    }
+
+
     return tx;
   } catch (err) {
     console.log(err)
