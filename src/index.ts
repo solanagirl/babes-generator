@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { Program, AnchorProvider, web3, Idl, BN, Wallet } from "@coral-xyz/anchor";
-import { Transaction, Connection, clusterApiUrl, PublicKey, SystemProgram, TransactionInstruction, Keypair, } from '@solana/web3.js'
+import { Transaction, Connection, clusterApiUrl, PublicKey, SystemProgram, TransactionInstruction, Keypair, TransactionMessage, VersionedMessage, VersionedTransaction, } from '@solana/web3.js'
 import * as idl from './idl.json';
 import { Web3MobileWallet } from '@solana-mobile/mobile-wallet-adapter-protocol-web3js';
 import { transact } from '@solana-mobile/mobile-wallet-adapter-protocol-web3js' 
@@ -9,106 +9,111 @@ import { PROGRAM_ID, createCreateMetadataAccountV3Instruction } from '@metaplex-
 
 async function createNFT(name: string, targetAddress: PublicKey, uri: string, attributes: any) {
     axios.defaults.headers.common["Authorization"] = `Bearer 5ce739510d5961.1c3a184261ed46dfb66e214f3e19480e`;
-    const { data } = await axios.post('https://dev.underdogprotocol.com/v2/projects/t/1/nfts', {
+    try {
+      const { data } = await axios.post('https://api.underdogprotocol.com/v2/projects/5/nfts', {
         name: name,
         image: uri,
         attributes: attributes,
         receiverAddress: targetAddress.toBase58()
-    });
-    console.log(data)
-    return data;
+      });
+      console.log(data)
+      return data;  
+    } catch (err) {
+      console.log(err);
+    }
 }
 
 async function findNFT(address: PublicKey) {
     axios.defaults.headers.common["Authorization"] = `Bearer 5ce739510d5961.1c3a184261ed46dfb66e214f3e19480e`;
-    const { data } = await axios.get(`https://dev.underdogprotocol.com/v2/projects/t/1/nfts/search?search=${address}`)
+    const { data } = await axios.get(`https://api.underdogprotocol.com/v2/projects/5/nfts/search?search=${address}`)
     return data
 }
 
 async function updateNFT(nft: any) {
   axios.defaults.headers.common["Authorization"] = `Bearer 5ce739510d5961.1c3a184261ed46dfb66e214f3e19480e`;
-  const newstreak = nft.streak + 1
   const update = JSON.stringify({
     attributes: {
-      "streak": newstreak
     }
   })
-  const {data} = await axios.patch(`https://dev.underdogprotocol.com/v2/projects/t/1/nfts/${nft.id}`, update)
+  const {data} = await axios.patch(`https://api.underdogprotocol.com/v2/projects/5/nfts/${nft.id}`, update)
   return data
 
 }
 
 async function stakeNFT(smsWallet: Web3MobileWallet, publicKey: PublicKey, mintPublicKey: PublicKey, stakeTokenAccount: PublicKey) {
-    const connection = new Connection(clusterApiUrl('devnet'), 'confirmed');
+  const connection = new Connection(clusterApiUrl('devnet'), 'confirmed');
 
-    const wallet: Wallet = {
+  const wallet: Wallet = {
+    //@ts-ignore
+      signTransaction: async (transaction: Transaction) => {
+        const signedTransaction: Transaction = await transact(async wallet => {
+          const transactions: Transaction[] = await wallet.signTransactions({
+            transactions: [transaction],
+          });
+          return transactions[0];
+        });
+        return signedTransaction;
+      },
       //@ts-ignore
-        signTransaction: async (transaction: Transaction) => {
-          const signedTransaction: Transaction = await transact(async wallet => {
-            const transactions: Transaction[] = await wallet.signTransactions({
-              transactions: [transaction],
-            });
-            return transactions[0];
+      signAllTransactions: async (transactions: Transaction[]) => {
+        const signedTransactions: Transaction[] = await transact(async wallet => {
+          // Construct a transaction then request for signing
+          const tx: Transaction[] = await wallet.signTransactions({
+            transactions: transactions
           });
-          return signedTransaction;
-        },
-        //@ts-ignore
-        signAllTransactions: async (transactions: Transaction[]) => {
-          const signedTransactions: Transaction[] = await transact(async wallet => {
-            // Construct a transaction then request for signing
-            const tx: Transaction[] = await wallet.signTransactions({
-              transactions: transactions
-            });
-      
-            return transactions;
-          });
-          return signedTransactions;
-        },
-        publicKey
-    };
     
-    const provider = new AnchorProvider(connection, wallet, {preflightCommitment: 'confirmed', commitment: 'confirmed'});
-    const bnAmount = new BN(1);
-    const program = new Program(
-        idl as Idl,
-        'B9cAgrXZ51EV8GXEGVgHuVjFAsdtJ1qm1aqi8KHyFXQd',
-        provider,
-      ) as Program;    
-      
-    let [stakeInfo] = PublicKey.findProgramAddressSync(
-        [Buffer.from("stake_info"), publicKey.toBuffer()],
-        program.programId
-      );
+          return transactions;
+        });
+        return signedTransactions;
+      },
+      publicKey
+  };
   
-      console.log(stakeInfo)
-    const [stakerStakeTokenAccount] = PublicKey.findProgramAddressSync(
-        [Buffer.from("token"), publicKey.toBuffer()],
-        program.programId
-    );
-    console.log(stakerStakeTokenAccount)
-
-    const tx = new Transaction()
+  const provider = new AnchorProvider(connection, wallet, {preflightCommitment: 'confirmed', commitment: 'confirmed'});
+  const bnAmount = new BN(1);
+  const program = new Program(
+      idl as Idl,
+      'B9cAgrXZ51EV8GXEGVgHuVjFAsdtJ1qm1aqi8KHyFXQd',
+      provider,
+    ) as Program;    
     
-    tx.add(await program.methods
-    .stake(bnAmount)
-    .accounts({
-        stakeInfo: stakeInfo,
-        signer: publicKey,
-        mint: mintPublicKey,
-        stakerStakeTokenAccount: stakerStakeTokenAccount,
-        stakerTokenAccount: stakeTokenAccount,
-    }).transaction());
+  let [stakeInfo] = PublicKey.findProgramAddressSync(
+      [Buffer.from("stake_info"), publicKey.toBuffer(), mintPublicKey.toBuffer()],
+      program.programId
+    );
 
-    const latestBlockhash = (await connection.getLatestBlockhash()).blockhash;
+    console.log(stakeInfo)
+  const [stakerStakeTokenAccount] = PublicKey.findProgramAddressSync(
+      [Buffer.from("token"), publicKey.toBuffer()],
+      program.programId
+  );
 
-    tx.feePayer = publicKey;
-    tx.recentBlockhash = latestBlockhash;
+  const tx = new Transaction()
 
-    console.log("Starting Stake"); 
-    const sendTransactionHash = await smsWallet.signAndSendTransactions({transactions: [tx]});
-    console.log(sendTransactionHash);
-    return sendTransactionHash; 
+  
+  tx.add(await program.methods
+  .stake(bnAmount)
+  .accounts({
+      stakeInfo: stakeInfo,
+      signer: publicKey,
+      mint: mintPublicKey,
+      stakerStakeTokenAccount: stakerStakeTokenAccount,
+      stakerTokenAccount: stakeTokenAccount,
+  }).transaction());
+
+  const latestBlockhash = (await connection.getLatestBlockhash()).blockhash;
+
+  tx.feePayer = publicKey;
+  tx.recentBlockhash = latestBlockhash;
+
+  const t = await connection.simulateTransaction(tx);
+  console.log(t)
+  console.log("Starting Stake"); 
+  const sendTransactionHash = await smsWallet.signAndSendTransactions({transactions: [tx]});
+  console.log(sendTransactionHash);
+  return sendTransactionHash; 
 }
+
 
 async function getStakedNFTs(publicKey: PublicKey) {
   const stake_programId = new PublicKey('B9cAgrXZ51EV8GXEGVgHuVjFAsdtJ1qm1aqi8KHyFXQd');
@@ -123,7 +128,7 @@ async function getStakedNFTs(publicKey: PublicKey) {
 }
 
 
-async function initStakePool(smsWallet: Web3MobileWallet, publicKey: PublicKey, mint: Keypair) {
+async function initStakePool(smsWallet: Web3MobileWallet, publicKey: PublicKey, mint: PublicKey) {
   const connection = new Connection(clusterApiUrl('devnet'), 'confirmed');
 
   const wallet: Wallet = {
@@ -160,19 +165,11 @@ async function initStakePool(smsWallet: Web3MobileWallet, publicKey: PublicKey, 
     ) as Program;  
       
   const [stakePoolTokenAccount] = PublicKey.findProgramAddressSync(
-    [Buffer.from("stake_pool")],
+    [Buffer.from("determination")],
     program.programId
   );
 
   const tx = new Transaction()
-
-  tx.add(await program.methods
-  .initStakepool()
-  .accounts({
-    signer: publicKey,
-    stakePoolTokenAccount: stakePoolTokenAccount,
-    mint: mint.publicKey
-  }).transaction());
 
 
   const latestBlockhash = (await connection.getLatestBlockhash()).blockhash;
@@ -189,18 +186,55 @@ async function initStakePool(smsWallet: Web3MobileWallet, publicKey: PublicKey, 
   return sendTransactionHash; 
 }
 
-async function mintNFT(wallet: any, publicKey: PublicKey, stakePoolAccount: PublicKey, connection: Connection, uri: string) {
+async function mintNFT(smsWallet: Web3MobileWallet, publicKey: PublicKey, stakePoolAccount: PublicKey, connection: Connection, uri: string) {
   const mint = Keypair.generate();
   const programAccount = new PublicKey('B9cAgrXZ51EV8GXEGVgHuVjFAsdtJ1qm1aqi8KHyFXQd')
+
+  const wallet: Wallet = {
+    //@ts-ignore
+      signTransaction: async (transaction: Transaction) => {
+        const signedTransaction: Transaction = await transact(async wallet => {
+          const transactions: Transaction[] = await wallet.signTransactions({
+            transactions: [transaction],
+          });
+          return transactions[0];
+        });
+        return signedTransaction;
+      },
+      //@ts-ignore
+      signAllTransactions: async (transactions: Transaction[]) => {
+        const signedTransactions: Transaction[] = await transact(async wallet => {
+          // Construct a transaction then request for signing
+          const tx: Transaction[] = await wallet.signTransactions({
+            transactions: transactions
+          });
+    
+          return tx;
+        });
+        return signedTransactions;
+      },
+      publicKey
+  };
+
   let Blockhash = (await connection.getLatestBlockhash('confirmed'));
-  // const res = await initStakePool(wallet, publicKey, mint);
-  // console.log(res)
-  console.log(mint.publicKey)
   const associatedToken = await getAssociatedTokenAddressSync(mint.publicKey, stakePoolAccount, true)
   const tokenPubkey = PublicKey.findProgramAddressSync(
       [ Buffer.from('metadata'), PROGRAM_ID.toBuffer(), mint.publicKey.toBuffer()],
       PROGRAM_ID,
   )[0];
+
+  const provider = new AnchorProvider(connection, wallet, {preflightCommitment: 'confirmed', commitment: 'confirmed'});
+  const program = new Program(
+      idl as Idl,
+      'B9cAgrXZ51EV8GXEGVgHuVjFAsdtJ1qm1aqi8KHyFXQd',
+      provider,
+    ) as Program;  
+      
+  const [stakePoolTokenAccount] = PublicKey.findProgramAddressSync(
+    [Buffer.from("determination")],
+    program.programId
+  );
+
   const token_transaction = new Transaction();
   token_transaction.feePayer = publicKey;
   token_transaction.recentBlockhash = Blockhash.blockhash;
@@ -264,33 +298,34 @@ async function mintNFT(wallet: any, publicKey: PublicKey, stakePoolAccount: Publ
                   uses: null
               },
               isMutable: true,
-              collectionDetails: null
+              collectionDetails: null,
           }
       }
   )
 
   token_transaction.instructions.push(createV3MetadataInstruction);
 
+  console.log('Init Stake Pool')
+  token_transaction.add(await program.methods
+    .init_stakepool()
+    .accounts({
+      signer: publicKey,
+      stakePoolTokenAccount: stakePoolTokenAccount,
+      mint: mint.publicKey
+    }).transaction());
 
-  const simulate = await connection.simulateTransaction(token_transaction);
-  console.log(simulate)
+  const tx = await smsWallet.signTransactions({transactions: [token_transaction]});
 
-  console.log('Sending Transaction');
+  console.log(tx)
 
   try {
-    const tx = await wallet.signTransactions({transactions: [token_transaction], minContextSlot: Blockhash.lastValidBlockHeight});
-      let blockheight = await connection.getBlockHeight();
-
-    while (blockheight < Blockhash.lastValidBlockHeight) {
-      connection.sendRawTransaction(tx, {
+    //@ts-ignore
+      const hash = await connection.sendTransaction(tx, {
         skipPreflight: true,
+        maxRetries: 5
       });
-      await setTimeout(()=> {}, 500);
-      blockheight = await connection.getBlockHeight();
-    }
-
-
-    return tx;
+      console.log(hash)
+      return mint.publicKey
   } catch (err) {
     console.log(err)
   } finally {
@@ -335,26 +370,18 @@ async function mintToStakePool(smsWallet: Web3MobileWallet, publicKey: PublicKey
     ) as Program;  
       
   const [stakePoolAccount] = PublicKey.findProgramAddressSync(
-    [Buffer.from("stake_pool")],
+    [Buffer.from("determination")],
     program.programId
   );
-  
-  const nft = await mintNFT(smsWallet, publicKey, stakePoolAccount, connection, 'ipfs://bafybeic3c5k3p2tu4rke43d5ghrvpymlhfajekggpawnahgn72gpnrntv4')
+
+  const mint = await mintNFT(smsWallet, publicKey, stakePoolAccount, connection, 'ipfs://bafybeic3c5k3p2tu4rke43d5ghrvpymlhfajekggpawnahgn72gpnrntv4')
+
+  const stakePool = await initStakePool(smsWallet, publicKey, mint);
 
 
-  console.log(nft)
-  // const latestBlockhash = (await connection.getLatestBlockhash()).blockhash;
+  console.log('stakepool', stakePool)
 
-  // tx.feePayer = publicKey;
-  // tx.recentBlockhash = latestBlockhash;
 
-  
-  // const simulate = await connection.simulateTransaction(tx);
-  // console.log(simulate)
-  // console.log("Starting Init Pool"); 
-  // const sendTransactionHash = await smsWallet.signAndSendTransactions({transactions: [tx]});
-  // console.log(sendTransactionHash);
-  // return sendTransactionHash; 
 }
 
 
@@ -396,7 +423,7 @@ async function unstakeNFT(smsWallet: Web3MobileWallet, publicKey: PublicKey, min
     ) as Program;  
         
   let [stakeInfo] = PublicKey.findProgramAddressSync(
-      [Buffer.from("stake_info"), publicKey.toBuffer()],
+      [Buffer.from("stake_info"), publicKey.toBuffer(), mint.toBuffer()],
       program.programId
     );
 
@@ -406,7 +433,7 @@ async function unstakeNFT(smsWallet: Web3MobileWallet, publicKey: PublicKey, min
   );
 
   const [stakerStakePoolAccount] = PublicKey.findProgramAddressSync(
-    [Buffer.from("stake_pool")],
+    [Buffer.from("determination")],
     program.programId
   );
 

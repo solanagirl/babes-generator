@@ -34,16 +34,16 @@ export default function ConnectButton(props: Props) {
       style={{ justifyContent: 'center', alignItems: 'center', paddingTop: 30}}>
       {/* <View style={styles.glow}></View> */}
       <LinearGradient 
-        colors={[Colors.purple, Colors.blue, Colors.mint]} 
-        start={{x: 0.2, y: 0}} 
-        end={{x: 1, y: 1.8}}
+        colors={[Colors.pink, Colors.purple, Colors.blue]} 
+        start={{x: 0.1, y: 0}} 
+        end={{x: 1, y: 0.8}}
         // locations={[0,0.5,0.6]} 
         style={styles.button}>
-        <Text style={styles.baseText}>
-          <Text style={styles.text}>
-            Connect Wallet
-          </Text>
-        </Text>
+            <Text style={styles.baseText}>
+            <Text style={styles.text}>
+              Connect Wallet
+            </Text>
+            </Text>
       </LinearGradient>
     </TouchableOpacity>
   );

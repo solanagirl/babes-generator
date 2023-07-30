@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {Image, RefreshControl, ImageBackground, ScrollView, StyleSheet, Text, View} from 'react-native';
+import {Image, RefreshControl, ImageBackground, ScrollView, StyleSheet, Text, View, Touchable, TouchableOpacity} from 'react-native';
 
 import {
   useAuthorization,
@@ -11,10 +11,7 @@ import DisconnectButton from '../components/DisconnectButton';
 import { Menu } from '../components/Menu'
 import { Colors } from '../components/Colors'
 import { findNFT, getStakedNFTs } from '../src';
-import LoadingComponent from '../components/Loading'
 import NotificationButton from '../components/NotificationButton';
-import { UnstakedHabit } from '../components/UnstakedHabit';
-import { StakedHabit } from '../components/StakedHabit';
 import { useGuardedCallback } from '../src/useGuardedCallback';
 import { transact } from '@solana-mobile/mobile-wallet-adapter-protocol-web3js';
 
@@ -23,7 +20,6 @@ export default function MainScreen({ navigation }: any) {
   const {authorizeSession, selectedAccount} = useAuthorization();
   const [balance, setBalance] = useState<number | null>(null);
   const [nfts, setNFTs] = useState<any>([]);
-  const [loading, setLoading] = useState(false);
   const [stakedNFTs, setStakedNFTs] = useState<any>([]);
   const [authorizationInProgress, setAuthorizationInProgress] = useState(false);
 
@@ -37,17 +33,6 @@ export default function MainScreen({ navigation }: any) {
     [balance],
   );
 
-  const onRefresh = useCallback(async () => {
-    setLoading(true)
-    if (selectedAccount) {
-      const data = await findNFT(selectedAccount.publicKey);
-      setNFTs(await data.results);
-      const stakedNFTs = await getStakedNFTs(selectedAccount.publicKey);
-      setStakedNFTs(stakedNFTs.results);  
-      setLoading(false)    
-    }
-}, [loading]);
-
 
   useEffect(() => {
     if (!selectedAccount) {
@@ -56,41 +41,19 @@ export default function MainScreen({ navigation }: any) {
     fetchAndUpdateBalance(selectedAccount);
   }, [fetchAndUpdateBalance, selectedAccount]);
 
-  useEffect(() => {
-    async function getNFTs() {
-      if (selectedAccount) {
-        setLoading(true)
-        const data = await findNFT(selectedAccount!.publicKey);
-        setNFTs(await data.results);
-        const stakedNFTs = await getStakedNFTs(selectedAccount!.publicKey);
-        setStakedNFTs(stakedNFTs.results);  
-        setLoading(false)  
-      }
-    };
-    getNFTs();
-  }, [selectedAccount])
-  if (loading) {
     return (
-      <ImageBackground source={require('../img/backgroundGradient.png')} style={styles.backgroundImage}>
-      <View style={styles.contentContainer}>
-        <Text style={styles.baseText}>
-          <Text style={styles.title}>Loading...</Text>
-        </Text>
-      </View>
-      </ImageBackground>
-    )
-  } else {
-    return (
-      <ImageBackground source={require('../img/backgroundGradient.png')} style={styles.backgroundImage}>
-        <ScrollView refreshControl={
-          <RefreshControl refreshing={loading} onRefresh={onRefresh} />
-        }>
+      <ImageBackground source={require('../img/bg-pattern-4.jpg')} style={styles.backgroundImage}>
         <View style={styles.container}>
+          <View style={styles.mainContainer}>
+            <TouchableOpacity onPress={() => {navigation.navigate('Create')}}>
+              <Text style={styles.title}>
+              Make a Babe
+              </Text>
+            </TouchableOpacity>
+          </View>
         <View style={styles.mainContainer}>
-          <Text style={styles.baseText}>
-            <Text style={styles.title}>
-              Your habits and stakes,{"\n"}all in one place.
-            </Text>
+          <Text style={[styles.baseText, styles.title]}>
+            See your Babes
           </Text>
           {
             selectedAccount ? (
@@ -100,33 +63,7 @@ export default function MainScreen({ navigation }: any) {
             )
           }
         </View>
-        {
-          nfts.map((nft: any) => {
-            return (
-              <UnstakedHabit key={`${nft.name}_${nft.id}`} nft={nft}/>
-            )
-          })
-        }
-        {
-          stakedNFTs.length ? (
-            <View>
-              <Text>Staked NFTs</Text>
-              {
-                stakedNFTs.map((nft: any) => {
-                  return (
-                    <StakedHabit key={`${nft.name}_${nft.id}`} nft={nft}/>
-                  )
-                })                
-              }
-              </View>
-          ) : (
-            <></>
-          )
-        }
-        {
-        }
         </View>
-        </ScrollView>
         {
           selectedAccount ? (
               <Menu navigation={navigation}/>
@@ -136,13 +73,11 @@ export default function MainScreen({ navigation }: any) {
         }
     </ImageBackground>
   )};
-}
 
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 30,
     paddingVertical: 20,
-    backgroundColor: Colors.background,
     flex: 1,
     rowGap: 20,
     height: '100%',
@@ -160,6 +95,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: Colors.font,
     fontWeight: 'bold',
+    fontFamily: 'CarterOne'
   },
   contentContainer: {
     flex: 1,
@@ -171,10 +107,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   backgroundImage: {
-    flex: 1,
     width: '100%',
     height: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
+    objectFit: 'repeat',
   }
 });

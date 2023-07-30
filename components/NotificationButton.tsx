@@ -33,11 +33,14 @@ const NotificationButton: React.FC = () => {
     //     repeatType: 'day', // Repeat the notification daily
     //   });
     // }
-    PushNotification.localNotification({
-          channelId: 'default-channel',
-          title: 'Stabit',
-          message: 'This is a local notification test',
-        });
+    PushNotification.popInitialNotification(() => {
+      PushNotification.localNotification({
+        channelId: 'default-channel',
+        title: 'Stabit',
+        message: 'This is a local notification test',
+      });
+    })
+    console.log(PushNotification.getChannels(() => {}))
   };
 
   const handleDisableNotifications = () => {
@@ -59,7 +62,7 @@ const NotificationButton: React.FC = () => {
           </Text>
         </Text>
         {notificationsEnabled ? (
-          <TouchableOpacity activeOpacity={0.5} onPress={handleDisableNotifications} style={styles.smallButton}>
+          <TouchableOpacity activeOpacity={0.5} onPress={() => handleDisableNotifications()} style={styles.smallButton}>
             <Text style={styles.baseText}>
               <Text style={styles.buttonText}>
                 Enabled
@@ -67,7 +70,7 @@ const NotificationButton: React.FC = () => {
             </Text>
           </TouchableOpacity>
         ) : (
-          <TouchableOpacity activeOpacity={0.5} onPress={handleEnableNotifications} style={styles.smallButton}>
+          <TouchableOpacity activeOpacity={0.5} onPress={() => handleEnableNotifications()} style={styles.smallButton}>
             <Text style={styles.baseText}>
               <Text style={styles.buttonText}>
                 Disabled
@@ -76,7 +79,7 @@ const NotificationButton: React.FC = () => {
           </TouchableOpacity>
         )}
       </View>
-      <TouchableOpacity activeOpacity={0.5} onPress={handlePress} disabled={!notificationsEnabled} style={StyleSheet.compose(styles.smallButton, {maxWidth: 300})}>
+      <TouchableOpacity activeOpacity={0.5} onPress={() => handlePress()} disabled={!notificationsEnabled} style={StyleSheet.compose(styles.smallButton, {maxWidth: 300})}>
         <Text style={styles.baseText}>
           <Text style={styles.buttonText}>
             Send Notification

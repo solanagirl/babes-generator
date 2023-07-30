@@ -9,5 +9,11 @@ export const Colors = {
   blueTransparent: '#4dd9ffB0',
   mint: '#44c98d',
   black: '#000',
-  transparent: '#ffffff00'
+  transparent: '#ffffff00',
+  white: '#ffffff',
+  pale: '#EFBB9D',
+  light: '#D39778',
+  tan: '#844C39',
+  brown: '#844C39',
+  dark: '#461F14',
 };

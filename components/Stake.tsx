@@ -24,13 +24,11 @@ export default function Stake({nft}: Props) {
   
   const handleStakePress = useGuardedCallback(async () => {
     setStakeInProgress(true);
-    const token = getAssociatedTokenAddressSync(new PublicKey(nft.mintAddress), new PublicKey(nft.ownerAddress));
-
+    const token = getAssociatedTokenAddressSync(new PublicKey(nft.mintAddress), new PublicKey(selectedAccount!.publicKey));
     const signature = await transact(async (wallet) => {  
         if (wallet) {
             const authorizationResult = await authorizeSession(wallet);
             const stake = await stakeNFT(wallet, authorizationResult.publicKey, nft.mintAddress, token)
-            setStakeInProgress(false);
             return stake
         }
         setStakeInProgress(false);

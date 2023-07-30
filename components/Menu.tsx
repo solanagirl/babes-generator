@@ -1,4 +1,3 @@
-import {transact} from '@solana-mobile/mobile-wallet-adapter-protocol-web3js';
 import React, {ComponentProps, useState, useCallback} from 'react';
 import {Button, Image, ImageSourcePropType, Pressable, StyleSheet, TouchableOpacity, View} from 'react-native';
 import { Colors } from "./Colors"
@@ -37,7 +36,7 @@ export const Menu = ({navigation}: Props) => {
         return (
             <View style={styles.container}>
                 <TouchableOpacity activeOpacity={0.5} style={styles.button} onPress={() => {setExpanded(!expanded)}}>
-                    <Image source={require('../img/menu-regular-24.png')} style={styles.iconLarge} tintColor={Colors.font}/>
+                    <Image source={require('../img/icons/leaflet.png')} style={styles.iconLarge} tintColor={Colors.font}/>
                 </TouchableOpacity>
             </View>
         );        

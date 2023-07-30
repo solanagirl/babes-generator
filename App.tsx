@@ -1,6 +1,6 @@
 import { ConnectionProvider } from './components/providers/ConnectionProvider';
 import { clusterApiUrl } from '@solana/web3.js';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { SafeAreaView, StyleSheet, Platform } from 'react-native';
 import { AuthorizationProvider } from './components/providers/AuthorizationProvider';
 import { Header } from './components/Header';
@@ -10,32 +10,19 @@ import {Provider as PaperProvider} from 'react-native-paper';
 import PushNotification from 'react-native-push-notification';
 
 import MainScreen from './screens/MainScreen';
-import NewHabit from './screens/NewHabit';
-import Calendar from './screens/Calendar';
+import Create from './screens/Create';
 
 import { Colors } from './components/Colors';
 
-const DEVNET_ENDPOINT = clusterApiUrl('devnet');
+const ENDPOINT = clusterApiUrl('mainnet-beta');
 const Stack = createNativeStackNavigator();
 
 export default function App() {
-  PushNotification.createChannel(
-    {
-      channelId: 'default-channel', // Channel ID
-      channelName: 'Default Channel', // Channel name
-      channelDescription: 'A default notification channel', // Channel description
-      soundName: 'default', // Sound for notifications (optional)
-      importance: 4, // Importance level: 0 - 4 (0 being the lowest)
-      vibrate: true, // Enable vibration
-    },
-    // Callback function
-    (created) => console.log(`Notification channel '${created}' created`)
-  );
   
   return (
     <ConnectionProvider
       config={{commitment: 'confirmed'}}
-      endpoint={DEVNET_ENDPOINT}>
+      endpoint={ENDPOINT}>
       <AuthorizationProvider>
         <NavigationContainer>
         <SafeAreaView style={styles.shell}>
@@ -46,8 +33,7 @@ export default function App() {
                 component={MainScreen}
                 options={{ header: (props) => <Header date={true}></Header> }}
               />
-              <Stack.Screen name="NewHabit" component={NewHabit} options={{ header: (props) => <></> }} />
-              <Stack.Screen name="Calendar" component={Calendar} options={{ header: (props) => <Header date={true}></Header> }} />
+              <Stack.Screen name="Create" component={Create} options={{ header: (props) => <Header date={false}></Header> }} />
             </Stack.Navigator>
             </PaperProvider>
           </SafeAreaView>

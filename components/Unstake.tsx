@@ -22,7 +22,6 @@ export default function Unstake({nft}: Props) {
   const {authorizeSession, selectedAccount} = useAuthorization();
   const [stakeInProgress, setStakeInProgress] = useState(false);
   const token = getAssociatedTokenAddressSync(new PublicKey(nft.mintAddress), new PublicKey(selectedAccount!.publicKey), true);
-  console.log(token)
   const handleStakePress = useGuardedCallback(async () => {
     setStakeInProgress(true);
 
@@ -41,16 +40,19 @@ export default function Unstake({nft}: Props) {
   return (
     <Pressable
       disabled={stakeInProgress}
-      onPress={() => handleStakePress()}>
-        <Text>Unstake</Text>
+      onPress={() => handleStakePress()}
+      style={styles.button}>
+        <Text>Init Stake Pool</Text>
       </Pressable>
   );
 }
 
 export const styles = StyleSheet.create(({
-  icon: {
-    width: 36,
-    height: 36,
-    tintColor: '#ffffff'
-  },
+  button: {
+    borderRadius: 30,
+    height: 64,
+    justifyContent: 'center',
+    padding: 14,
+    backgroundColor: Colors.mint
+  }
 }))

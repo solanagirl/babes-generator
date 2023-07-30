@@ -62,7 +62,8 @@ function getPublicKeyFromAddress(address: Base64EncodedAddress): PublicKey {
 }
 
 export const APP_IDENTITY = {
-  name: 'STABIT',
+  name: 'Babes Generator <3',
+  icon: '../../img/BabesGenerator.png',
 };
 
 export interface AuthorizationProviderContext {
@@ -113,7 +114,7 @@ function AuthorizationProvider(props: {children: ReactNode}) {
             identity: APP_IDENTITY,
           })
         : wallet.authorize({
-            cluster: 'devnet',
+            cluster: 'mainnet-beta',
             identity: APP_IDENTITY,
           }));
       return (await handleAuthorizationResult(authorizationResult))
