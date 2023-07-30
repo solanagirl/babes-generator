@@ -16,12 +16,25 @@ const Skins = {
   };
 
 const Tops = {
-    yin: {
-        bra1: require('./yin/top/Bra1.png'),
-    },
-    yang: {
-        blackTshirt: require('./yang/top/black_tshirt.png'),
-    },
+    yin: [
+        {path: require('./yin/top/Bra1.png'), name: 'Black Bra 1', price: 0.01},
+        {path: require('./yin/top/black_and_green_bra.png'), name: 'Black and Green Bra', price: 0.05},
+        {path: require('./yin/top/black_and_pink_bra.png'), name: 'Black and Pink Bra', price: 0.05},
+        {path: require('./yin/top/black_bra.png'), name: 'Black Bra 2', price: 0.05},
+        {path: require('./yin/top/black_corset.png'), name: 'Black Corset', price: 0.50},
+        {path: require('./yin/top/black_fishnet_top.png'), name: 'Black Fishnet Top', price: 0.29},
+        {path: require('./yin/top/black_strapless.png'), name: 'Black Strapless', price: 0.17},
+        {path: require('./yin/top/white_strapless.png'), name: 'White Strapless', price: 0.17},
+    ],
+    yang: [
+        {path: require('./yang/top/black_tshirt.png'), name: 'Black T-shirt', price: 0.01},
+        {path: require('./yang/top/black_degen_hoodie.png'), name: 'Degen Hoodie', price: 0.29},
+        {path: require('./yang/top/black_ripped_hoodie.png'), name: 'Black Ripped Hoodie', price: 0.11},
+        {path: require('./yang/top/black_tank_top.png'), name: 'Black Tank Top', price: 0.04},
+        {path: require('./yang/top/black_embroidered_button_up.png'), name: 'Black Embroidered Button Up', price: 0.24},
+        {path: require('./yang/top/mint_rainbow_button_up.png'), name: 'Mint Rainbow Button Up', price: 0.39},
+        {path: require('./yang/top/white_crewneck.png'), name: 'White Crewneck', price: 0.19},
+    ],
 }
 
 const Eyes = {
@@ -39,24 +52,25 @@ const Eyes = {
 
 const Hair = {
     yin: [
-        // {blackMessy: require('./yin/hair/black_messy.png')},
-        // {blackPixie: require('./yin/hair/black_pixiecut.png')},
-        // {blondeBob: require('./yin/hair/blonde_bob.png')},
-        // {blondeWaves: require('./yin/hair/blonde_waves.png')},
-        // {brownAfro: require('./yin/hair/brown_afro.png')},
-        // {brownBraids: require('./yin/hair/brown_braids.png')},
-        // {gingerWaves: require('./yin/hair/ginger_waves.png')},
-        // {mintSplit: require('./yin/hair/mint_split.png')},
-        {black: require('./yin/hair/black.png')},
-        {brown: require('./yin/hair/brown.png')},
-        {blonde: require('./yin/hair/blonde.png')}
+        {path: require('./yin/hair/black.png'), name: 'Black Basic', price: 0.01},
+        {path: require('./yin/hair/brown.png'), name: 'Brown Basic', price: 0.01},
+        {path: require('./yin/hair/blonde.png'), name: 'Blonde Basic', price: 0.01},
+        {path: require('./yin/hair/black_bob.png'), name: 'Blacl Bob', price: 0.14},
+        {path: require('./yin/hair/blonde_bob.png'), name: 'Blonde Bob', price: 0.14},
+        {path: require('./yin/hair/black_mini_pigtails.png'), name: 'Black Mini Pigtails', price: 0.05},
+        {path: require('./yin/hair/blonde_side_waves.png'), name: 'Blonde Side Waves', price: 0.34},
+        {path: require('./yin/hair/blonde_waves.png'), name: 'Blonde Waves', price: 0.27},
+        {path: require('./yin/hair/mint_split.png'), name: 'Mint Split', price: 0.49},
+        {path: require('./yin/hair/purple_braids.png'), name: 'Purple Braids', price: 0.69},
+        {path: require('./yin/hair/purple_highlights.png'), name: 'Purple Highlights', price: 0.49},
+        {path: require('./yin/hair/silver_bangs.png'), name: 'Silver Bangs', price: 0.99}
     ],
     yang: [
-        {bald: require('./yang/hair/bald.png')},
-        {blackDreads: require('./yang/hair/black_dreads.png')},
-        {black: require('./yang/hair/black_hair_short.png')},
-        {brown: require('./yang/hair/brown_slickback.png')},
-        {blonde: require('./yang/hair/blonde_curls.png')}
+        {path: require('./yang/hair/bald.png'), name: 'Bald', price: 0.00},
+        {path: require('./yang/hair/black_dreads.png'), name: 'Black Dreads', price: 0.01},
+        {path: require('./yang/hair/black_hair_short.png'), name: 'Black Short Hair', price: 0.01},
+        {path: require('./yang/hair/brown_slickback.png'), name: 'Brown Slicked Back Hair', price: 0.01},
+        {path: require('./yang/hair/blonde_curls.png'), name: 'Blonde Curls', price: 0.01},
     ]
 }
 

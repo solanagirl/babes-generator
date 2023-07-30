@@ -7,6 +7,7 @@ export const Colors = {
   purple: '#5D4099',
   blue: '#4dd9ff',
   blueTransparent: '#4dd9ffB0',
+  tintedTransparent: '#000000B0',
   mint: '#44c98d',
   black: '#000',
   transparent: '#ffffff00',

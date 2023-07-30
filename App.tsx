@@ -13,6 +13,8 @@ import MainScreen from './screens/MainScreen';
 import Create from './screens/Create';
 
 import { Colors } from './components/Colors';
+import Store from './screens/Store';
+import Salon from './screens/Salon';
 
 const ENDPOINT = clusterApiUrl('mainnet-beta');
 const Stack = createNativeStackNavigator();
@@ -33,6 +35,8 @@ export default function App() {
                 component={MainScreen}
                 options={{ header: (props) => <Header date={true}></Header> }}
               />
+              <Stack.Screen name="Salon" component={Salon} options={{ header: (props) => <Header date={false}></Header> }} />
+              <Stack.Screen name="Store" component={Store} options={{ header: (props) => <Header date={false}></Header> }} />
               <Stack.Screen name="Create" component={Create} options={{ header: (props) => <Header date={false}></Header> }} />
             </Stack.Navigator>
             </PaperProvider>

@@ -8,7 +8,7 @@ import { MINT_SIZE, TOKEN_PROGRAM_ID, createAssociatedTokenAccountInstruction, c
 import { PROGRAM_ID, createCreateMetadataAccountV3Instruction } from '@metaplex-foundation/mpl-token-metadata';
 
 async function createNFT(name: string, targetAddress: PublicKey, uri: string, attributes: any) {
-    axios.defaults.headers.common["Authorization"] = `Bearer 5ce739510d5961.1c3a184261ed46dfb66e214f3e19480e`;
+    axios.defaults.headers.common["Authorization"] = `Bearer token`;
     try {
       const { data } = await axios.post('https://api.underdogprotocol.com/v2/projects/5/nfts', {
         name: name,
@@ -24,13 +24,13 @@ async function createNFT(name: string, targetAddress: PublicKey, uri: string, at
 }
 
 async function findNFT(address: PublicKey) {
-    axios.defaults.headers.common["Authorization"] = `Bearer 5ce739510d5961.1c3a184261ed46dfb66e214f3e19480e`;
+    axios.defaults.headers.common["Authorization"] = `Bearer token`;
     const { data } = await axios.get(`https://api.underdogprotocol.com/v2/projects/5/nfts/search?search=${address}`)
     return data
 }
 
 async function updateNFT(nft: any) {
-  axios.defaults.headers.common["Authorization"] = `Bearer 5ce739510d5961.1c3a184261ed46dfb66e214f3e19480e`;
+  axios.defaults.headers.common["Authorization"] = `Bearer token`;
   const update = JSON.stringify({
     attributes: {
     }

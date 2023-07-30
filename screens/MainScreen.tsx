@@ -43,6 +43,7 @@ export default function MainScreen({ navigation }: any) {
 
     return (
       <ImageBackground source={require('../img/bg-pattern-4.jpg')} style={styles.backgroundImage}>
+        <Image source={require('../img/banner.png')} style={styles.banner}/>
         <View style={styles.container}>
           <View style={styles.mainContainer}>
             <TouchableOpacity onPress={() => {navigation.navigate('Create')}}>
@@ -71,6 +72,7 @@ export default function MainScreen({ navigation }: any) {
             <></>
           )
         }
+        <Menu navigation={navigation} />
     </ImageBackground>
   )};
 
@@ -110,5 +112,9 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     objectFit: 'repeat',
+  }, 
+  banner: {
+    width: '100%',
+    height: 200,
   }
 });

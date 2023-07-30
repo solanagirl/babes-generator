@@ -1,4 +1,4 @@
-package com.solanamobiledappscaffold;
+package com.babesgenerator;
 
 import android.app.Application;
 import com.facebook.react.PackageList;

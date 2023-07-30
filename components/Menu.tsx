@@ -15,6 +15,17 @@ export const Menu = ({navigation}: Props) => {
                 <TouchableOpacity activeOpacity={0.5} style={styles.button} onPress={() => {setExpanded(!expanded)}}>
                     <Image source={require('../img/icons/leaflet.png')} style={styles.iconLarge} tintColor={Colors.font}/>
                 </TouchableOpacity>
+                <View style={styles.buttonGroup}>
+                <TouchableOpacity activeOpacity={0.5} style={styles.smallButton} onPress={() => {setExpanded(!expanded); navigation.navigate('Store')}}>
+                    <Image source={require('../img/icons/shop.png')} style={styles.icon} tintColor={Colors.font}/>
+                </TouchableOpacity>
+                <TouchableOpacity activeOpacity={0.5} style={styles.smallButton} onPress={() => {setExpanded(!expanded); navigation.navigate('Salon')}}>
+                    <Image source={require('../img/icons/hair-dryer.png')} style={styles.icon} tintColor={Colors.font}/>
+                </TouchableOpacity>
+                <TouchableOpacity activeOpacity={0.5} style={styles.smallButtonBottom} onPress={() => {setExpanded(!expanded); navigation.navigate('Create')}}>
+                        <Image source={require('../img/icons/wand.png')} style={styles.icon} tintColor={Colors.font}/>
+                    </TouchableOpacity>
+                </View>
             </View>
     
         )
@@ -40,6 +51,7 @@ const styles = StyleSheet.create({
       flexDirection: 'column-reverse',
       alignItems: 'center',
       zIndex: 1,
+      gap: 12,
     },
     button: {
         height: 80,
@@ -52,7 +64,7 @@ const styles = StyleSheet.create({
     },
     smallButton: {
         width: 60,
-        height: 40,  
+        height: 30,
         backgroundColor: Colors.component,
         borderRadius: 999,
         flex: 1,
@@ -61,7 +73,7 @@ const styles = StyleSheet.create({
     },
     smallButtonBottom: {
         width: 60,
-        height: 40,  
+        height: 30,
         backgroundColor: Colors.component,
         borderRadius: 999,
         flex: 1,

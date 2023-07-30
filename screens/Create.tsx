@@ -16,7 +16,7 @@ import { createNFT } from '../src';
 import { CameraRoll } from "@react-native-camera-roll/camera-roll";
 import { PermissionsAndroid, Platform } from "react-native";
 
-export default function Calendar({ navigation }: any) {
+export default function Create({ navigation }: any) {
   const {connection} = useConnection();
   const {selectedAccount} = useAuthorization();
   const [balance, setBalance] = useState<number | null>(null);
@@ -27,7 +27,8 @@ export default function Calendar({ navigation }: any) {
   const [imageURI, setImageURI] = useState<string>();
   const [name, setName] = useState<string>('Babe');
   const [attributes, setAttributes] = useState<any>({});
-  const ref = useRef();
+  const yangRef = useRef();
+  const yinRef = useRef();
 
   const [yang, setYang] = useState(false);
   const toggleSwitch = () => {setYang(previousState => !previousState); setSelectedEyebrowIndex(0); setSelectedHairIndex(0)};
@@ -49,8 +50,7 @@ export default function Calendar({ navigation }: any) {
     fetchAndUpdateBalance(selectedAccount);
   }, [fetchAndUpdateBalance, selectedAccount]);
 
-  const generateImage = useCallback(async() => {
-    // @ts-expect-error
+  const generateImage = useCallback(async(ref) => {
     ref.current.capture().then((uri: string) => {
       setImageURI(uri)
     });
@@ -141,26 +141,21 @@ export default function Calendar({ navigation }: any) {
           <View style={styles.mainContainer}>
             <Image source={{uri: imageURI}} style={styles.image} />
           </View>
-          <View style={styles.paddedContainer}>
-            <View style={styles.horizontalContainer}>
-              <Text>
-                Want to upgrade your babe?
-              </Text>
-              {
-                selectedAccount?.publicKey ? (
-                  <TouchableOpacity style={styles.button} onPress={() => {generateNFT()}}>
-                    <Text>Put Babe on Solana</Text>
-                  </TouchableOpacity>  
-                ) : (
-                  <ConnectButton title='Connect'/>
-                )
-              }
-            </View>
-            <View style={styles.horizontalContainer}>
-              <TouchableOpacity onPress={() => {savePicture();}}>
-              </TouchableOpacity>
-            </View>
-          </View>
+          <TouchableOpacity onPress={() => {savePicture();}}>
+            <Image source={require('../img/icons/download.png')} style={styles.downloadIcon}/>
+          </TouchableOpacity>
+          <ScrollView style={styles.paddedContainer}>
+            <Text style={styles.title}>
+              Want to own your babe?
+            </Text>
+            {
+              selectedAccount?.publicKey ? (
+                <Text>Minting coming soon. See src folder for minting code.</Text>
+              ) : (
+                <ConnectButton title='Connect'/>
+              )
+            }
+          </ScrollView>
         </View>
         <Menu navigation={navigation} />
       </ImageBackground>
@@ -199,10 +194,10 @@ export default function Calendar({ navigation }: any) {
     return (
       <ImageBackground source={require('../img/bg-pattern-4.jpg')} style={styles.backgroundImage}>
       <View style={styles.container}>
-          <ViewShot style={styles.mainContainer} ref={ref} options={{ fileName: "Babe", format: "jpg", quality: 1 }}>
+          <ViewShot style={styles.mainContainer} ref={yangRef} options={{ fileName: "Babe", format: "jpg", quality: 1 }}>
               <Image source={skin} style={styles.image} />
               <Image source={Lips.yang[0].smile} style={styles.image} />
-              <Image source={Tops.yang.blackTshirt} style={styles.image} />
+              <Image source={Tops.yang[0].path} style={styles.image} />
               <Image source={eyes} style={styles.image} />
               <Image source={Object.values(Eyebrows.yang[selectedEyebrowIndex])[0]} style={styles.image} />
               <Image source={Object.values(Hair.yang[selectedHairIndex])[0]} style={styles.image} />
@@ -242,7 +237,7 @@ export default function Calendar({ navigation }: any) {
               <TouchableOpacity style={styles.button} onPress={() => {updateHair(Hair.yang)}}>
                 <Text style={styles.buttonText}>Hairstyle</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.fullButton} onPress={() => {generateImage()}}>
+              <TouchableOpacity style={styles.fullButton} onPress={() => {generateImage(yangRef)}}>
               <Text style={styles.title}>Generate</Text>
             </TouchableOpacity>
             </View>
@@ -284,9 +279,9 @@ export default function Calendar({ navigation }: any) {
   return (
     <ImageBackground source={require('../img/bg-pattern-4.jpg')} style={styles.backgroundImage}>
     <View style={styles.container}>
-        <ViewShot style={styles.mainContainer} ref={ref} options={{ fileName: "Your-File-Name", format: "jpg", quality: 1 }}>
+        <ViewShot style={styles.mainContainer} ref={yinRef} options={{ fileName: "Your-File-Name", format: "jpg", quality: 1 }}>
             <Image source={skin} style={styles.image} />
-            <Image source={Tops.yin.bra1} style={styles.image} />
+            <Image source={Tops.yin[0].path} style={styles.image} />
             <Image source={Lips.yin[0].natural} style={styles.image} />
             <Image source={eyes} style={styles.image} />
             <Image source={Object.values(Eyebrows.yin[selectedEyebrowIndex])[0]} style={styles.image} />
@@ -324,10 +319,10 @@ export default function Calendar({ navigation }: any) {
             <TouchableOpacity style={styles.button} onPress={() => {updateEyebrows(Eyebrows.yin)}}>
                 <Text style={styles.buttonText}>Eyebrows</Text>
               </TouchableOpacity>
-            <TouchableOpacity style={styles.button} onPress={() => {updateHair(Hair.yin)}}>
+            <TouchableOpacity style={styles.button} onPress={() => {updateHair(Hair.yin.slice(0, 3))}}>
               <Text style={styles.buttonText}>Hairstyle</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.fullButton} onPress={() => {generateImage()}}>
+            <TouchableOpacity style={styles.fullButton} onPress={() => {generateImage(yinRef)}}>
             <Text style={styles.title}>Generate</Text>
           </TouchableOpacity>
           </View>
@@ -389,6 +384,12 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   switch: {
+    marginTop: -36
+  },
+  downloadIcon: {
+    width: 24,
+    height: 24,
+    tintColor: Colors.font,
     marginTop: -36
   },
   buttonText: {
