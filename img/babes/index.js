@@ -19,6 +19,9 @@ const Tops = {
     yin: {
         bra1: require('./yin/top/Bra1.png'),
     },
+    yang: {
+        blackTshirt: require('./yang/top/black_tshirt.png'),
+    },
 }
 
 const Eyes = {
@@ -27,6 +30,10 @@ const Eyes = {
         black: require('./yin/eyes/black.png'),
         green: require('./yin/eyes/green.png'),
         pink: require('./yin/eyes/pink.png'),
+    },
+    yang: {
+        blue: require('./yang/eyes/blue.png'),
+        pink: require('./yang/eyes/pink.png'),
     },
 }
 
@@ -43,6 +50,13 @@ const Hair = {
         {black: require('./yin/hair/black.png')},
         {brown: require('./yin/hair/brown.png')},
         {blonde: require('./yin/hair/blonde.png')}
+    ],
+    yang: [
+        {bald: require('./yang/hair/bald.png')},
+        {blackDreads: require('./yang/hair/black_dreads.png')},
+        {black: require('./yang/hair/black_hair_short.png')},
+        {brown: require('./yang/hair/brown_slickback.png')},
+        {blonde: require('./yang/hair/blonde_curls.png')}
     ]
 }
 
@@ -51,12 +65,21 @@ const Eyebrows = {
         {blonde: require('./yin/eyebrows/blonde.png')},
         {pointed: require('./yin/eyebrows/pointed.png')},
         {straight: require('./yin/eyebrows/straight.png')},
+    ],
+    yang: [
+        {blonde: require('./yang/eyebrows/blonde.png')},
+        {pointed: require('./yang/eyebrows/pointed.png')},
+        {straight: require('./yang/eyebrows/straight.png')},
     ]
+
 }
 
 const Lips = {
     yin: [
         {natural: require('./yin/lips/natural.png')},
+    ],
+    yang: [
+        {smile: require('./yang/lips/smile.png')},
     ]
 }
 

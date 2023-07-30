@@ -13,22 +13,8 @@ export const Menu = ({navigation}: Props) => {
         return (
             <View style={styles.container}>
                 <TouchableOpacity activeOpacity={0.5} style={styles.button} onPress={() => {setExpanded(!expanded)}}>
-                    <Image source={require('../img/menu-regular-24.png')} style={styles.iconLarge} tintColor={Colors.font}/>
+                    <Image source={require('../img/icons/leaflet.png')} style={styles.iconLarge} tintColor={Colors.font}/>
                 </TouchableOpacity>
-                <View style={styles.buttonGroup}>
-                    <TouchableOpacity activeOpacity={0.5} style={styles.smallButton} onPress={() => {setExpanded(!expanded); navigation.navigate('NewHabit')}}>
-                        <Image source={require('../img/plus-regular-24.png')} style={styles.icon} tintColor={Colors.font}/>
-                    </TouchableOpacity>
-                    <TouchableOpacity activeOpacity={0.5} style={styles.smallButton} onPress={() => {setExpanded(!expanded); navigation.navigate('Calendar')}}>
-                        <Image source={require('../img/calendar-regular-24.png')} style={styles.icon} tintColor={Colors.font}/>
-                    </TouchableOpacity>
-                    <TouchableOpacity activeOpacity={0.5} style={styles.smallButton} onPress={() => {setExpanded(!expanded); navigation.navigate('Analytics')}}>
-                        <Image source={require('../img/line-chart-regular-24.png')} style={styles.icon} tintColor={Colors.font}/>
-                    </TouchableOpacity>
-                    <TouchableOpacity activeOpacity={0.5} style={styles.smallButtonBottom} onPress={() => {setExpanded(!expanded); navigation.navigate('Home')}}>
-                        <Image source={require('../img/home-alt-2-regular-24.png')} style={styles.icon} tintColor={Colors.font}/>
-                    </TouchableOpacity>
-                </View>
             </View>
     
         )

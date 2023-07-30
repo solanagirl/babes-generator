@@ -29,8 +29,8 @@ export default function Calendar({ navigation }: any) {
   const [attributes, setAttributes] = useState<any>({});
   const ref = useRef();
 
-  const [isEnabled, setIsEnabled] = useState(false);
-  const toggleSwitch = () => setIsEnabled(previousState => !previousState);
+  const [yang, setYang] = useState(false);
+  const toggleSwitch = () => {setYang(previousState => !previousState); setSelectedEyebrowIndex(0); setSelectedHairIndex(0)};
 
   const fetchAndUpdateBalance = useGuardedCallback(
     async (account: Account) => {
@@ -63,45 +63,17 @@ export default function Calendar({ navigation }: any) {
     }
   }, [])
 
-  let skin;
-  switch (selectedSkin) {
-    case 'dark':
-      skin = (Skins.yin.dark);
-      break;
-    case 'tan':
-      skin = (Skins.yin.tan);  
-      break;
-    case 'light':
-      skin = Skins.yin.light;
-      break;
-    case 'pale':
-      skin = Skins.yin.pale;  
-      break;
-    case 'brown':
-      skin = Skins.yin.brown;  
-      break;  
-  }
 
-  let eyes;
-  switch (selectedEyes) {
-    case 'blue':
-      eyes = Eyes.yin.blue;
-      break;
-    case 'pink':
-      eyes = Eyes.yin.pink;  
-      break;
-  }
-
-  function updateHair() {
-    if (selectedHairIndex == Hair.yin.length - 1) {
+  function updateHair(hair: any) {
+    if (selectedHairIndex == hair.length - 1) {
       setSelectedHairIndex(0);
     } else {
       setSelectedHairIndex((prevState) => prevState+1);
     }
   }
 
-  function updateEyebrows() {
-    if (selectedEyebrowIndex == Eyebrows.yin.length - 1) {
+  function updateEyebrows(eyebrows: any) {
+    if (selectedEyebrowIndex == eyebrows.length - 1) {
       setSelectedEyebrowIndex(0);
     } else {
       setSelectedEyebrowIndex((prevState) => prevState+1);
@@ -186,26 +158,132 @@ export default function Calendar({ navigation }: any) {
             </View>
             <View style={styles.horizontalContainer}>
               <TouchableOpacity onPress={() => {savePicture();}}>
-                <Text>Save to camera roll</Text>
               </TouchableOpacity>
             </View>
           </View>
         </View>
+        <Menu navigation={navigation} />
       </ImageBackground>
     )
   }
 
+  if (yang) {
+    let skin;
+    switch (selectedSkin) {
+      case 'dark':
+        skin = (Skins.yang.dark);
+        break;
+      case 'tan':
+        skin = (Skins.yang.tan);  
+        break;
+      case 'light':
+        skin = Skins.yang.light;
+        break;
+      case 'pale':
+        skin = Skins.yang.pale;  
+        break;
+      case 'brown':
+        skin = Skins.yang.brown;  
+        break;  
+    }
+    let eyes;
+    switch (selectedEyes) {
+        case 'pink':
+        eyes = Eyes.yang.pink;  
+        break;
+    case 'blue':
+      eyes = Eyes.yang.blue;  
+      break;  
+    }
+  
+    return (
+      <ImageBackground source={require('../img/bg-pattern-4.jpg')} style={styles.backgroundImage}>
+      <View style={styles.container}>
+          <ViewShot style={styles.mainContainer} ref={ref} options={{ fileName: "Babe", format: "jpg", quality: 1 }}>
+              <Image source={skin} style={styles.image} />
+              <Image source={Lips.yang[0].smile} style={styles.image} />
+              <Image source={Tops.yang.blackTshirt} style={styles.image} />
+              <Image source={eyes} style={styles.image} />
+              <Image source={Object.values(Eyebrows.yang[selectedEyebrowIndex])[0]} style={styles.image} />
+              <Image source={Object.values(Hair.yang[selectedHairIndex])[0]} style={styles.image} />
+          </ViewShot>
+          <Switch trackColor={{false: '#767577', true: '#81b0ff'}}
+            thumbColor={yang ? '#f5dd4b' : '#f4f3f4'}
+            ios_backgroundColor="#3e3e3e"
+            onValueChange={toggleSwitch}
+            value={yang}
+            style={styles.switch}
+          ></Switch>
+          <View style={styles.paddedContainer}>
+            <View style={styles.horizontalContainer}>
+              <Text style={styles.title}>Skin Color</Text>
+              <TouchableOpacity onPress={() => {setSelectedSkin('pale')}} style={styles.pale}>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => {setSelectedSkin('light')}} style={styles.light}>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => {setSelectedSkin('tan')}} style={styles.tan}>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => {setSelectedSkin('brown')}} style={styles.brown}>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => {setSelectedSkin('dark')}} style={styles.dark}>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.horizontalContainer}>
+              <Text style={styles.title}>Eye Color</Text>
+              <TouchableOpacity onPress={() => {setSelectedEyes('blue')}} style={styles.blue}>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => {setSelectedEyes('pink')}} style={styles.pink}>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.horizontalContainer}>
+              <TouchableOpacity style={styles.button} onPress={() => {updateEyebrows(Eyebrows.yang)}}>
+                  <Text style={styles.buttonText}>Eyebrows</Text>
+                </TouchableOpacity>
+              <TouchableOpacity style={styles.button} onPress={() => {updateHair(Hair.yang)}}>
+                <Text style={styles.buttonText}>Hairstyle</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.fullButton} onPress={() => {generateImage()}}>
+              <Text style={styles.title}>Generate</Text>
+            </TouchableOpacity>
+            </View>
+          </View>
+      </View>
+      <Menu navigation={navigation}/>
+      </ImageBackground>
+    );    
+  } else {
+    let skin;
+    switch (selectedSkin) {
+      case 'dark':
+        skin = (Skins.yin.dark);
+        break;
+      case 'tan':
+        skin = (Skins.yin.tan);  
+        break;
+      case 'light':
+        skin = Skins.yin.light;
+        break;
+      case 'pale':
+        skin = Skins.yin.pale;  
+        break;
+      case 'brown':
+        skin = Skins.yin.brown;  
+        break;  
+    }
+  
+    let eyes;
+    switch (selectedEyes) {
+      case 'blue':
+        eyes = Eyes.yin.blue;
+        break;
+      case 'pink':
+        eyes = Eyes.yin.pink;  
+        break;
+    }
+  
   return (
     <ImageBackground source={require('../img/bg-pattern-4.jpg')} style={styles.backgroundImage}>
     <View style={styles.container}>
-      <View style={styles.horizontalContainer}>
-        <Switch trackColor={{false: '#767577', true: '#81b0ff'}}
-          thumbColor={isEnabled ? '#f5dd4b' : '#f4f3f4'}
-          ios_backgroundColor="#3e3e3e"
-          onValueChange={toggleSwitch}
-          value={isEnabled}
-        ></Switch>
-      </View>
         <ViewShot style={styles.mainContainer} ref={ref} options={{ fileName: "Your-File-Name", format: "jpg", quality: 1 }}>
             <Image source={skin} style={styles.image} />
             <Image source={Tops.yin.bra1} style={styles.image} />
@@ -214,6 +292,13 @@ export default function Calendar({ navigation }: any) {
             <Image source={Object.values(Eyebrows.yin[selectedEyebrowIndex])[0]} style={styles.image} />
             <Image source={Object.values(Hair.yin[selectedHairIndex])[0]} style={styles.image} />
         </ViewShot>
+        <Switch trackColor={{false: '#767577', true: '#81b0ff'}}
+          thumbColor={yang ? '#f5dd4b' : '#f4f3f4'}
+          ios_backgroundColor="#3e3e3e"
+          onValueChange={toggleSwitch}
+          value={yang}
+          style={styles.switch}
+        ></Switch>
         <View style={styles.paddedContainer}>
           <View style={styles.horizontalContainer}>
             <Text style={styles.title}>Skin Color</Text>
@@ -236,10 +321,10 @@ export default function Calendar({ navigation }: any) {
             </TouchableOpacity>
           </View>
           <View style={styles.horizontalContainer}>
-            <TouchableOpacity style={styles.button} onPress={() => {updateEyebrows()}}>
+            <TouchableOpacity style={styles.button} onPress={() => {updateEyebrows(Eyebrows.yin)}}>
                 <Text style={styles.buttonText}>Eyebrows</Text>
               </TouchableOpacity>
-            <TouchableOpacity style={styles.button} onPress={() => {updateHair()}}>
+            <TouchableOpacity style={styles.button} onPress={() => {updateHair(Hair.yin)}}>
               <Text style={styles.buttonText}>Hairstyle</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.fullButton} onPress={() => {generateImage()}}>
@@ -251,6 +336,7 @@ export default function Calendar({ navigation }: any) {
     <Menu navigation={navigation}/>
     </ImageBackground>
   );
+  }
 }
 
 const styles = StyleSheet.create({
@@ -301,6 +387,9 @@ const styles = StyleSheet.create({
     color: Colors.font,
     fontFamily: 'Nunito',
     textAlign: 'center',
+  },
+  switch: {
+    marginTop: -36
   },
   buttonText: {
     fontSize: 12,
